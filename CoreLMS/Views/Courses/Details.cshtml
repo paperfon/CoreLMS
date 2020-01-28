@@ -1,0 +1,45 @@
+﻿@model CoreLMS.Core.Models.Course
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Course</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CourseName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CourseName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        @*<dt class=" col-sm-2">@Html.DisplayNameFor(model => model.CourseModules)</dt>
+        <dd class="col-sm-10">
+
+            @foreach (var module in Model.CourseModules)
+            {  
+
+                    @module.ModuleName       
+
+            }*@
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.CourseId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

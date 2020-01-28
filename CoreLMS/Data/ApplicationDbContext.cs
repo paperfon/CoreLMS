@@ -27,5 +27,7 @@ namespace CoreLMS.Data
                 });
 
         }
+
+        public DbSet<Course> Course { get; set; }
     }
 }
