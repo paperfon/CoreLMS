@@ -5,6 +5,11 @@
     <UserSecretsId>aspnet-CoreLMS-FC10C365-73DE-4D7F-B861-EB2F61AB20F1</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200128092806_Init.cs" />
+    <Compile Remove="Data\Migrations\20200128092806_Init.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />

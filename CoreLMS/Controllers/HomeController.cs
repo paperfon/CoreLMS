@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Diag = System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using CoreLMS.Models;
+using CoreLMS.Core.Models;
 
 namespace CoreLMS.Controllers
 {
@@ -31,7 +31,7 @@ namespace CoreLMS.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel { RequestId = Diag.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
