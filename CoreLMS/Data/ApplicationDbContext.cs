@@ -27,5 +27,7 @@ namespace CoreLMS.Data
                 });
 
         }
+
+        public DbSet<CoreLMS.Core.Models.Document> Document { get; set; }
     }
 }
