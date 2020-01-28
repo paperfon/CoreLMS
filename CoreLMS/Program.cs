@@ -26,9 +26,9 @@ namespace CoreLMS
                 context.Database.Migrate();
 
                 var config = host.Services.GetRequiredService<IConfiguration>();
-                // Need to be added in command
-                // dotnet user-secrets set "LMS:AdminPW" "YourPassword!"
-                // it's a json format where LMS{AdminPW: ...}
+                // The following needs to be added in the command prompt
+                // Example: dotnet user-secrets set "KEY" "YourPassword!"
+                // Sets up that key and value in the secrets.json file
                 var adminPW = config["KEY"];
 
                 try
