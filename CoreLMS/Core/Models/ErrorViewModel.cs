@@ -1,6 +1,6 @@
 using System;
 
-namespace CoreLMS.Models
+namespace CoreLMS.Core.Models
 {
     public class ErrorViewModel
     {
