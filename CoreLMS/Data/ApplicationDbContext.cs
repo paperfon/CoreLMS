@@ -25,6 +25,7 @@ namespace CoreLMS.Data
                     k.LMSUserId,
                     k.CourseId
                 });
+
         }
     }
 }

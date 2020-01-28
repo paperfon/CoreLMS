@@ -61,7 +61,12 @@ namespace CoreLMS.Data
                 var adminUser = await userManager.FindByEmailAsync(adminEmails[0]);
                 foreach (var role in roleNames)
                 {
-                    if (adminUser != null) continue;
+                    // If an admin is found:
+                    //if (adminUser != null) continue;
+
+                    var rolesAssigned = await userManager.GetRolesAsync(adminUser);
+                    if (rolesAssigned.Count > 0) continue;
+
                     // Assign a user to a role
                     var addToRoleResult = await userManager.AddToRoleAsync(adminUser, role);
                     if (!addToRoleResult.Succeeded)
@@ -70,6 +75,85 @@ namespace CoreLMS.Data
                     }
                 }
 
+                // Create and assign teacher role
+                var teacherEmails = new[] { "teacher@lms.se" };
+
+                foreach (var email in teacherEmails)
+                {
+                    var foundUser = await userManager.FindByEmailAsync(email);
+                    if (foundUser != null) continue;
+
+                    var user = new LMSUser
+                    {
+                        UserName = email,
+                        Email = email
+                    };
+                    var result = await userManager.CreateAsync(user, adminPW);
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(string.Join("\n", result.Errors));
+                    }
+                }
+
+                // TODO: Refactor this too
+                var teacherUser = await userManager.FindByEmailAsync(teacherEmails[0]);
+
+                var rolesAssignedTeacher = await userManager.GetRolesAsync(teacherUser);
+                if (rolesAssignedTeacher.Count > 0)
+                {
+
+                }
+                else
+                {
+                    // Assign a user to a role
+                    var addToRoleResult = await userManager.AddToRoleAsync(teacherUser, "Teacher");
+                    if (!addToRoleResult.Succeeded)
+                    {
+                        throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                    }
+
+                }
+
+                // Creating and assigning student role
+                var studentEmails = new[] { "student1@lms.se", "student2@lms.se" };
+
+                foreach (var email in studentEmails)
+                {
+                    var foundUser = await userManager.FindByEmailAsync(email);
+                    if (foundUser != null) continue;
+
+                    var user = new LMSUser
+                    {
+                        UserName = email,
+                        Email = email
+                    };
+                    var result = await userManager.CreateAsync(user, adminPW);
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(string.Join("\n", result.Errors));
+                    }
+                }
+
+                // TODO: Refactor this too
+
+                foreach (var email in studentEmails)
+                {
+                    var studentUser = await userManager.FindByEmailAsync(email);
+                    var studentUserRole = await userManager.GetRolesAsync(studentUser);
+                    if (studentUserRole.Count > 0)
+                    {
+
+                    }
+                    else
+                    {
+                        var addToRoleResult = await userManager.AddToRoleAsync(studentUser, "Student");
+                        if (!addToRoleResult.Succeeded)
+                        {
+                            throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                        }
+                    }
+
+                }
             }
         }
     }
