@@ -14,6 +14,8 @@ namespace CoreLMS.Data
         {
         }
 
+        public DbSet<LMSUserCourse> LMSUserCourses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -26,5 +28,9 @@ namespace CoreLMS.Data
                     k.CourseId
                 });
         }
+
+        public DbSet<CoreLMS.Core.Models.Module> Module { get; set; }
+
+        public DbSet<CoreLMS.Core.Models.Activity> Activity { get; set; }
     }
 }
