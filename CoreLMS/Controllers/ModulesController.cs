@@ -22,7 +22,8 @@ namespace CoreLMS.Controllers
         // GET: Modules
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Module;
+            var applicationDbContext = _context.Module
+                .Include(c => c.Course);
             var model = await applicationDbContext.ToListAsync();
             return View(model);
         }
@@ -35,15 +36,16 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var @module = await _context.Module
+            var module = await _context.Module
                 .Include(c => c.Course)
+                .Include(m => m.ModuleActivities)
                 .FirstOrDefaultAsync(m => m.ModuleId == id);
-            if (@module == null)
+            if (module == null)
             {
                 return NotFound();
             }
 
-            return View(@module);
+            return View(module);
         }
 
         // GET: Modules/Create
@@ -58,16 +60,16 @@ namespace CoreLMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ModuleId,ModuleName,StartDate,EndDate,Description,CourseId")] Module @module)
+        public async Task<IActionResult> Create([Bind("ModuleId,ModuleName,StartDate,EndDate,Description,CourseId")] Module module)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@module);
+                _context.Add(module);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", @module.CourseId);
-            return View(@module);
+            return View(module);
         }
 
         // GET: Modules/Edit/5
@@ -78,13 +80,13 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var @module = await _context.Module.FindAsync(id);
-            if (@module == null)
+            var module = await _context.Module.FindAsync(id);
+            if (module == null)
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", @module.CourseId);
-            return View(@module);
+            ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", module.CourseId);
+            return View(module);
         }
 
         // POST: Modules/Edit/5
@@ -92,9 +94,9 @@ namespace CoreLMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ModuleId,ModuleName,StartDate,EndDate,Description,CourseId")] Module @module)
+        public async Task<IActionResult> Edit(int id, [Bind("ModuleId,ModuleName,StartDate,EndDate,Description,CourseId")] Module module)
         {
-            if (id != @module.ModuleId)
+            if (id != module.ModuleId)
             {
                 return NotFound();
             }
@@ -103,7 +105,7 @@ namespace CoreLMS.Controllers
             {
                 try
                 {
-                    _context.Update(@module);
+                    _context.Update(module);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -119,12 +121,12 @@ namespace CoreLMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", @module.CourseId);
-            return View(@module);
+            ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", module.CourseId);
+            return View(module);
         }
 
         // GET: Modules/Delete/5
-              private bool ModuleExists(int id)
+        private bool ModuleExists(int id)
         {
             return _context.Module.Any(e => e.ModuleId == id);
         }

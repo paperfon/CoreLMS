@@ -12,6 +12,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="28.4.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
@@ -24,9 +25,8 @@
 
 
   <ItemGroup>
-    <Folder Include="DOX\Course\" />
-    <Folder Include="DOX\Module\" />
-    <Folder Include="DOX\Activity\" />
+    <Folder Include="Core\ViewModels\" />
+    <Folder Include="Dox\" />
   </ItemGroup>
 
 </Project>
