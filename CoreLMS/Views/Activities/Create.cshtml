@@ -34,7 +34,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ActivityType" class="control-label"></label>
-                <input asp-for="ActivityType" class="form-control" />
+                <select asp-for="ActivityType" asp-items="Html.GetEnumSelectList<ActivityType>()" class="form-control"></select>
                 <span asp-validation-for="ActivityType" class="text-danger"></span>
             </div>
             <div class="form-group">

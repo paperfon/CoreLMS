@@ -15,12 +15,20 @@ namespace CoreLMS.Core.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
-        public string ActivityType { get; set; }
+        public ActivityType ActivityType { get; set; }
 
         [Required]
         public int ModuleId { get; set; }
         public Module Module { get; set; }
 
         public ICollection<Document> ActivityDocuments { get; set; }
+    }
+
+    public enum ActivityType
+    {
+        ELearning,
+        Session,
+        Homework,
+        Other
     }
 }
