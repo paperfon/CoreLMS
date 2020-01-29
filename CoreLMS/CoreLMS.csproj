@@ -24,7 +24,9 @@
 
 
   <ItemGroup>
-    <Folder Include="Core\ViewModels\" />
+    <Folder Include="DOX\Course\" />
+    <Folder Include="DOX\Module\" />
+    <Folder Include="DOX\Activity\" />
   </ItemGroup>
 
 </Project>
