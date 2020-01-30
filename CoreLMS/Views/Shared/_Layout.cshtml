@@ -6,6 +6,8 @@
     <title>@ViewData["Title"] - CoreLMS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/lms.css" />
+
 </head>
 <body>
     <header>
@@ -33,6 +35,9 @@
             </div>
         </nav>
     </header>
+
+    <partial name="_Sidebarpartial" />
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

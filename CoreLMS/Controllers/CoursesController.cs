@@ -149,5 +149,23 @@ namespace CoreLMS.Controllers
         {
             return _context.Course.Any(e => e.CourseId == id);
         }
+
+        public async Task<IActionResult> CoursesModules(int id)
+        {
+            var model = await _context.Module
+                .Where(m => m.CourseId == id)
+                .ToListAsync();
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> ModulesActivities(int id)
+        {
+            var model = await _context.Activity
+                .Where(a => a.ModuleId == id)
+                .ToListAsync();
+
+            return View(model);
+        }
     }
 }
