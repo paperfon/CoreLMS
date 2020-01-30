@@ -38,6 +38,7 @@ namespace CoreLMS.Controllers
 
             var module = await _context.Module
                 .Include(c => c.Course)
+                .Include(m => m.ModuleActivities)
                 .FirstOrDefaultAsync(m => m.ModuleId == id);
             if (module == null)
             {
@@ -125,7 +126,7 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Modules/Delete/5
-              private bool ModuleExists(int id)
+        private bool ModuleExists(int id)
         {
             return _context.Module.Any(e => e.ModuleId == id);
         }
