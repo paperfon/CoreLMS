@@ -342,3 +342,8 @@ healthchecksdb
 # Ignore Documents folder
 Dox
 Dox/*
+healthchecksdb
+
+#Ignore Documents upload
+DOX
+DOX/*

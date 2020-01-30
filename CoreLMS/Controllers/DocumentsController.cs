@@ -7,17 +7,85 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoreLMS.Core.Models;
 using CoreLMS.Data;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using CoreLMS.Core.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CoreLMS.Controllers
 {
     public class DocumentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        
 
         public DocumentsController(ApplicationDbContext context)
         {
             _context = context;
+            
         }
+
+        [HttpGet]
+        public ViewResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync(UploadFile model)
+        {
+            if (ModelState.IsValid)
+            {
+                string FileName = null;
+                string filePath = null;
+
+                if (model.File != null)
+                {
+
+                    string projectDir = System.IO.Directory.GetCurrentDirectory();
+                    var uploadsFolder = Path.Combine(projectDir, "DOX");
+                    FileName = Path.GetFileName(model.File.FileName); 
+                    filePath = Path.Combine(uploadsFolder,FileName);
+                    model.File.CopyTo(new FileStream(filePath, FileMode.Append));
+                }
+
+                var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                var document = new Document
+                {
+
+                    DocumentName = model.DocumentName,
+                    UploadTime = DateTime.Now,
+                    DocumentPath = filePath,
+                    TypeOfDocument=model.TypeOfDocument,
+                    LMSUserId = user.Id
+
+                };
+
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(document);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+               
+            }
+
+            return View();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
         // GET: Documents
         public async Task<IActionResult> Index()
@@ -49,35 +117,35 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Documents/Create
-        public IActionResult Create()
-        {
-            ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName");
-            ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName");
-            ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id");
-            ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName");
-            return View();
-        }
+        //public IActionResult Create()
+        //{
+        //    ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName");
+        //    ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName");
+        //    ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id");
+        //    ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName");
+        //    return View();
+        //}
 
         // POST: Documents/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DocumentId,DocumentName,UploadTime,DocumentPath,TypeOfDocument,LMSUserId,CourseId,ModuleId,ActivityId")] Document document)
-        {
-            document.UploadTime = DateTime.Now;
-            if (ModelState.IsValid)
-            {
-                _context.Add(document);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName", document.ActivityId);
-            ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", document.CourseId);
-            ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id", document.LMSUser);
-            ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName", document.ModuleId);
-            return View(document);
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("DocumentId,DocumentName,UploadTime,DocumentPath,TypeOfDocument,LMSUserId,CourseId,ModuleId,ActivityId")] Document document)
+        //{
+        //    document.UploadTime = DateTime.Now;
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(document);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName", document.ActivityId);
+        //    ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", document.CourseId);
+        //    ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id", document.LMSUser);
+        //    ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName", document.ModuleId);
+        //    return View(document);
+        //}
 
         // GET: Documents/Edit/5
         public async Task<IActionResult> Edit(int? id)
