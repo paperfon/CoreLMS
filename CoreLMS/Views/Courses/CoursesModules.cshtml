@@ -5,17 +5,10 @@
 }
 
 <h1>CoursesModules:</h1>
-<div>
-    @foreach (var item in Model)
-    {
-        
-            <h2>
-                @Html.DisplayFor(modelItem => item.Course.CourseName)
-            </h2>
-        
-        break;
-    }
-</div>
+
+<h2>  
+            @Model.First().Course.CourseName
+</h2>
 
 
 
