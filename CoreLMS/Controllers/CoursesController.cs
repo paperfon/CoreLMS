@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoreLMS.Core.Models;
 using CoreLMS.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoreLMS.Controllers
 {
+    [Authorize]
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -154,6 +156,7 @@ namespace CoreLMS.Controllers
         public async Task<IActionResult> CoursesModules(int id)
         {
             var model = await _context.Module
+                 .Include(c => c.Course)
                 .Where(m => m.CourseId == id)
                 .ToListAsync();
 
@@ -163,6 +166,7 @@ namespace CoreLMS.Controllers
         public async Task<IActionResult> ModulesActivities(int id)
         {
             var model = await _context.Activity
+                .Include(m=> m.Module)
                 .Where(a => a.ModuleId == id)
                 .ToListAsync();
 
