@@ -131,6 +131,10 @@ namespace CoreLMS.Controllers
             return _context.Module.Any(e => e.ModuleId == id);
         }
 
+        //public async Task<IActionResult> GetCourseName()
+        //{
+        //    return (await _context.Course.FirstOrDefaultAsync(c=>c.CourseName).ToString);
+        //}
      
     }
 }
