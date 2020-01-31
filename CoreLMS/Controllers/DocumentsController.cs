@@ -8,9 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CoreLMS.Core.Models;
 using CoreLMS.Core.ViewModels;
 using CoreLMS.Data;
-using Microsoft.AspNetCore.Http;
 using System.IO;
-using Microsoft.AspNetCore.Hosting;
 
 namespace CoreLMS.Controllers
 {
@@ -25,8 +23,9 @@ namespace CoreLMS.Controllers
             
         }
 
+        [Route("Create/{id}/{name}")]
         [HttpGet]
-        public ViewResult Create()
+        public ViewResult Create(int? id, string name)
         {
             List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
             ViewBag.lmsentitylist = new SelectList(Lmslentities);
@@ -34,11 +33,14 @@ namespace CoreLMS.Controllers
             List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
             ViewBag.typeOfDoclist = new SelectList(typeofdoc);
 
+
             return View();
         }
 
+
+        [Route("Create/{id}/{name}")]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(UploadFile model)
+        public async Task<IActionResult> CreateAsync(UploadFile model, int id, string name)
         {
             if (ModelState.IsValid)
             {
@@ -55,6 +57,7 @@ namespace CoreLMS.Controllers
                     model.File.CopyTo(new FileStream(filePath, FileMode.Append));
                 }
 
+
                 var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
                 var document = new Document
                 {
@@ -62,12 +65,25 @@ namespace CoreLMS.Controllers
                     DocumentName = model.DocumentName,
                     UploadTime = DateTime.Now,
                     DocumentPath = filePath,
-                    TypeOfDocument=model.TypeOfDocument,
+                    TypeOfDocument = model.TypeOfDocument,
                     LMSUserId = user.Id
 
                 };
 
-
+                if (name == "Course")
+                {
+                    document.CourseId = id;
+                }
+                else
+               if (name == "Module")
+                {
+                    document.ModuleId = id;
+                }
+                else
+               if (name == "Activity")
+                {
+                    document.ActivityId = id;
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -83,28 +99,41 @@ namespace CoreLMS.Controllers
         }
 
 
+        public ViewResult GetListBasedonSelectedEntity(string entityname)
+        {
+            if (entityname == "Course")
+            {
+                var Courselist = _context.Course.Select(c => c.CourseName).ToList();
+                ViewBag.entitylist = Courselist;
+            }
+            else if (entityname == "Module")
+            {
 
+                var Modulelist = _context.Module.Select(m => m.ModuleName).ToList();
+                ViewBag.entitylist = Modulelist;
+            }
+            else if (entityname == "Activity")
+            {
+                var Activitylist = _context.Activity.Select(a => a.ActivityName).ToList();
+                ViewBag.entitylist = Activitylist;
+            }
 
+            return View();
+        }
 
-
-
-
-
-
-
-
+      
 
         // GET: Documents
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module);
 
-            
+
             foreach (var item in applicationDbContext)
             {
-                ViewBag.filepath = Path.GetFullPath(item.DocumentPath);
+                
                 item.DocumentPath = Path.GetFileName(item.DocumentPath);
-
+                ViewBag.file = Path.Combine(Environment.CurrentDirectory, "/Dox/", item.DocumentPath);
             }
             
 

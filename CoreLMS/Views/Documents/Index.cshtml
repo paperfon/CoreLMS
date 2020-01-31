@@ -9,7 +9,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="UploadDocument">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -43,6 +43,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.DocumentName)
@@ -52,7 +53,7 @@
             </td>
             <td>
                 <div>
-                    <a href="@ViewBag.filepath">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                    <a href=@ViewBag.file>@Html.DisplayFor(modelItem => item.DocumentPath)</a>
                 </div>
             </td>
             <td>

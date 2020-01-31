@@ -51,7 +51,7 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ModuleId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ModuleId">Details</a> |
-                <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.ModuleId">Upload Documents</a>
+                <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.ModuleId" asp-route-name="Module">Upload Documents</a>
                 @*<a asp-action="Delete" asp-route-id="@item.ModuleId">Delete</a>*@
             </td>
         </tr>
