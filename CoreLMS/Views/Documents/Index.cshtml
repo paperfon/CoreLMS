@@ -1,4 +1,6 @@
-﻿@model IEnumerable<CoreLMS.Core.Models.Document>
+﻿@model  IEnumerable<CoreLMS.Core.Models.Document>
+                                 
+@*@model IEnumerable<CoreLMS.Core.ViewModels.DocumentList>*@
 
 @{
     ViewData["Title"] = "Index";
@@ -49,7 +51,9 @@
                 @Html.DisplayFor(modelItem => item.UploadTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DocumentPath)
+                <div>
+                    <a href="@ViewBag.filepath">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                </div>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TypeOfDocument)

@@ -19,5 +19,15 @@ namespace CoreLMS.Core.ViewModels
         public string LMSUserId { get; set; }
 
         public IFormFile File { get; set; }
+
+        public Entity LMSEntity { get; set; }
+        
+    }
+
+    public enum Entity
+    {
+        Course,
+        Module,
+        Activity
     }
 }

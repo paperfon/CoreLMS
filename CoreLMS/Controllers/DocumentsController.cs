@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoreLMS.Core.Models;
+using CoreLMS.Core.ViewModels;
 using CoreLMS.Data;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using CoreLMS.Core.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 
 namespace CoreLMS.Controllers
@@ -28,6 +28,12 @@ namespace CoreLMS.Controllers
         [HttpGet]
         public ViewResult Create()
         {
+            List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
+            ViewBag.lmsentitylist = new SelectList(Lmslentities);
+
+            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
+            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
+
             return View();
         }
 
@@ -62,6 +68,7 @@ namespace CoreLMS.Controllers
                 };
 
 
+
                 if (ModelState.IsValid)
                 {
                     _context.Add(document);
@@ -91,6 +98,16 @@ namespace CoreLMS.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module);
+
+            
+            foreach (var item in applicationDbContext)
+            {
+                ViewBag.filepath = Path.GetFullPath(item.DocumentPath);
+                item.DocumentPath = Path.GetFileName(item.DocumentPath);
+
+            }
+            
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -108,6 +125,7 @@ namespace CoreLMS.Controllers
                 .Include(d => d.LMSUser)
                 .Include(d => d.Module)
                 .FirstOrDefaultAsync(m => m.DocumentId == id);
+
             if (document == null)
             {
                 return NotFound();

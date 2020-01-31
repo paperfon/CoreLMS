@@ -25,7 +25,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Core\ViewModels\" />
     <Folder Include="Dox\" />
   </ItemGroup>
 
