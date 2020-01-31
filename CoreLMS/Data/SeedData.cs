@@ -104,33 +104,36 @@ namespace CoreLMS.Data
                 }
 
                 // Creating students
-                var studentEmails = new[] { "student1@lms.se", "student2@lms.se" };
+                var studentEmails = new List<string> { };
+
+                for (int i = 1; i < 21; i++)
+                {
+                    var email = "student" + i + "@lms.se";
+                    studentEmails.Add(email);
+                }
 
                 foreach (var email in studentEmails)
                 {
                     var foundUser = await userManager.FindByEmailAsync(email);
                     if (foundUser != null) continue;
-                    else
-                    {
-                        await NewUser(adminPW, userManager, email);
-                    }
+                    else { await NewUser(adminPW, userManager, email); }
                 }
 
                 // Assigning roles for the students users
                 foreach (var email in studentEmails)
-                {
-                    var studentUser = await userManager.FindByEmailAsync(email);
-                    var studentUserRole = await userManager.GetRolesAsync(studentUser);
-                    if (studentUserRole.Count > 0) continue;
-                    else
                     {
-                        var addToRoleResult = await userManager.AddToRoleAsync(studentUser, "Student");
-                        if (!addToRoleResult.Succeeded)
+                        var studentUser = await userManager.FindByEmailAsync(email);
+                        var studentUserRole = await userManager.GetRolesAsync(studentUser);
+                        if (studentUserRole.Count > 0) continue;
+                        else
                         {
-                            throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                            var addToRoleResult = await userManager.AddToRoleAsync(studentUser, "Student");
+                            if (!addToRoleResult.Succeeded)
+                            {
+                                throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                            }
                         }
                     }
-                }
 
                 // Faking courses, modules and activities
                 var fake = new Faker();
@@ -194,10 +197,14 @@ namespace CoreLMS.Data
 
         private static async Task NewUser(string adminPW, UserManager<LMSUser> userManager, string email)
         {
+            var fake = new Faker();
+
             var user = new LMSUser
             {
                 UserName = email,
-                Email = email
+                Email = email,
+                FirstName = fake.Name.FirstName(),
+                LastName = fake.Name.LastName()
             };
 
             var result = await userManager.CreateAsync(user, adminPW);
