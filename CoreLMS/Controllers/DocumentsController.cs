@@ -51,7 +51,7 @@ namespace CoreLMS.Controllers
                 {
 
                     string projectDir = System.IO.Directory.GetCurrentDirectory();
-                    var uploadsFolder = Path.Combine(projectDir, "DOX");
+                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/DOX");
                     FileName = Path.GetFileName(model.File.FileName); 
                     filePath = Path.Combine(uploadsFolder,FileName);
                     model.File.CopyTo(new FileStream(filePath, FileMode.Append));
@@ -131,9 +131,9 @@ namespace CoreLMS.Controllers
 
             foreach (var item in applicationDbContext)
             {
-                
+                ViewBag.file = item.DocumentPath;
                 item.DocumentPath = Path.GetFileName(item.DocumentPath);
-                ViewBag.file = Path.Combine(Environment.CurrentDirectory, "/Dox/", item.DocumentPath);
+                
             }
             
 
