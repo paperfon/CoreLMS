@@ -121,76 +121,85 @@ namespace CoreLMS.Data
 
                 // Assigning roles for the students users
                 foreach (var email in studentEmails)
+                {
+                    var studentUser = await userManager.FindByEmailAsync(email);
+                    var studentUserRole = await userManager.GetRolesAsync(studentUser);
+                    if (studentUserRole.Count > 0) continue;
+                    else
                     {
-                        var studentUser = await userManager.FindByEmailAsync(email);
-                        var studentUserRole = await userManager.GetRolesAsync(studentUser);
-                        if (studentUserRole.Count > 0) continue;
-                        else
+                        var addToRoleResult = await userManager.AddToRoleAsync(studentUser, "Student");
+                        if (!addToRoleResult.Succeeded)
                         {
-                            var addToRoleResult = await userManager.AddToRoleAsync(studentUser, "Student");
-                            if (!addToRoleResult.Succeeded)
-                            {
-                                throw new Exception(string.Join("\n", addToRoleResult.Errors));
-                            }
+                            throw new Exception(string.Join("\n", addToRoleResult.Errors));
                         }
                     }
+                }
 
                 // Faking courses, modules and activities
                 var fake = new Faker();
                 var r = new Random();
 
-                var courses = new List<Course>();
-                for (int i = 0; i < 5; i++)
+                if (!context.Course.Any())
                 {
-                    var course = new Course
+                    var courses = new List<Course>();
+                    for (int i = 0; i < 5; i++)
                     {
-                        CourseName = fake.Company.CompanyName(),
-                        StartDate = fake.Date.Future(),
-                        Description = fake.Lorem.Paragraph()
-                    };
-                    courses.Add(course);
+                        var course = new Course
+                        {
+                            CourseName = fake.Company.CompanyName(),
+                            StartDate = fake.Date.Future(),
+                            Description = fake.Lorem.Paragraph()
+                        };
+                        courses.Add(course);
+                    }
+                    context.AddRange(courses);
+                    context.SaveChanges();
                 }
-                context.AddRange(courses);
-                context.SaveChanges();
 
-                var modules = new List<Module>();
-                for (int i = 0; i < 40; i++)
+                if (!context.Module.Any())
                 {
-                    var getCoursesIds = context.Course.Select(v => v.CourseId).ToList();
-                    var randomCourseId = getCoursesIds.OrderBy(x => r.Next()).Take(1).FirstOrDefault();
-
-                    var module = new Module
+                    var modules = new List<Module>();
+                    for (int i = 0; i < 20; i++)
                     {
-                        ModuleName = fake.Company.CatchPhrase(),
-                        StartDate = fake.Date.Future(),
-                        EndDate = fake.Date.Future(),
-                        Description = fake.Lorem.Sentences(),
-                        CourseId = randomCourseId
-                    };
-                    modules.Add(module);
-                }
-                context.AddRange(modules);
-                context.SaveChanges();
+                        var getCoursesIds = context.Course.Select(v => v.CourseId).ToList();
+                        var randomCourseId = getCoursesIds.OrderBy(x => r.Next()).Take(1).FirstOrDefault();
 
-                var activities = new List<Activity>();
-                for (int i = 0; i < 80; i++)
+                        var module = new Module
+                        {
+                            ModuleName = fake.Company.CatchPhrase(),
+                            StartDate = fake.Date.Future(),
+                            EndDate = fake.Date.Future(),
+                            Description = fake.Lorem.Sentences(),
+                            CourseId = randomCourseId
+                        };
+                        modules.Add(module);
+                    }
+                    context.AddRange(modules);
+                    context.SaveChanges();
+                }
+
+                if (!context.Activity.Any())
                 {
-                    var getModulesIds = context.Module.Select(v => v.ModuleId).ToList();
-                    var randomModuleId = getModulesIds.OrderBy(x => r.Next()).Take(1).FirstOrDefault();
-
-                    var activity = new Activity
+                    var activities = new List<Activity>();
+                    for (int i = 0; i < 40; i++)
                     {
-                        ActivityName = fake.Hacker.Phrase(),
-                        StartDate = fake.Date.Future(),
-                        EndDate = fake.Date.Future(),
-                        Description = fake.Lorem.Sentences(),
-                        ActivityType = (ActivityType)fake.Random.Int(0, 3),
-                        ModuleId = randomModuleId
-                    };
-                    activities.Add(activity);
+                        var getModulesIds = context.Module.Select(v => v.ModuleId).ToList();
+                        var randomModuleId = getModulesIds.OrderBy(x => r.Next()).Take(1).FirstOrDefault();
+
+                        var activity = new Activity
+                        {
+                            ActivityName = fake.Hacker.Phrase(),
+                            StartDate = fake.Date.Future(),
+                            EndDate = fake.Date.Future(),
+                            Description = fake.Lorem.Sentences(),
+                            ActivityType = (ActivityType)fake.Random.Int(0, 3),
+                            ModuleId = randomModuleId
+                        };
+                        activities.Add(activity);
+                    }
+                    context.AddRange(activities);
+                    context.SaveChanges();
                 }
-                context.AddRange(activities);
-                context.SaveChanges();
 
             }
         }
