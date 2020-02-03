@@ -76,7 +76,6 @@ namespace CoreLMS.Controllers
                 if (model.File != null)
                 {
 
-
                     string projectDir = System.IO.Directory.GetCurrentDirectory();
                     var uploadsFolder = Path.Combine(projectDir, "wwwroot/DOX");
                     FileName = Path.GetFileName(model.File.FileName);
