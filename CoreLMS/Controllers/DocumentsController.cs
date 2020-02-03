@@ -23,6 +23,109 @@ namespace CoreLMS.Controllers
             
         }
 
+        
+        public JsonResult GetEntityNamelist(string entityname)
+        {
+           
+                
+            if (entityname == "Course")
+            {
+                return Json(_context.Course.Select(c => new SelectListItem { Value = c.CourseId.ToString(), Text = c.CourseName }).ToList());
+            }
+            else if (entityname == "Module")
+            {
+                return Json(_context.Module.Select(m => new SelectListItem { Value = m.ModuleId.ToString(), Text = m.ModuleName }).ToList());
+            }
+            else if (entityname == "Activity")
+            {
+                return Json(_context.Activity.Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList());
+            }
+            else
+            {
+                return Json("error");
+            }
+
+
+        }
+
+        
+        [HttpGet]
+        public ViewResult UploadDocument()
+        {
+            List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
+            ViewBag.lmsentity = new SelectList(Lmslentities);
+
+            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
+            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
+
+
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UploadDocumentAsync(UploadFile model)
+        {
+
+            
+            if (ModelState.IsValid)
+            {
+                string FileName = null;
+                string filePath = null;
+
+                if (model.File != null)
+                {
+
+                    string projectDir = System.IO.Directory.GetCurrentDirectory();
+                    var uploadsFolder = Path.Combine(projectDir, "Dox");
+                    FileName = Path.GetFileName(model.File.FileName);
+                    filePath = Path.Combine(uploadsFolder, FileName);
+                    model.File.CopyTo(new FileStream(filePath, FileMode.Create));
+                }
+               
+                var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+                var document = new Document
+                {
+
+                    DocumentName = model.DocumentName,
+                    UploadTime = DateTime.Now,
+                    DocumentPath = filePath,
+                    TypeOfDocument = model.TypeOfDocument,
+                    LMSUserId = user.Id
+
+                };
+
+                if (model.selectedentity == "Course")
+                {
+                    document.CourseId = model.selectedentityid;
+                }
+                else
+               if (model.selectedentity == "Module")
+                {
+                    document.ModuleId = model.selectedentityid;
+                }
+                else
+               if (model.selectedentity == "Activity")
+                {
+                    document.ActivityId = model.selectedentityid;
+                }
+
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(document);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+
+            }
+
+            return View();
+        }
+
+
+
         [Route("Create/{id}/{name}")]
         [HttpGet]
         public ViewResult Create(int? id, string name)
@@ -30,11 +133,7 @@ namespace CoreLMS.Controllers
             List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
             ViewBag.lmsentitylist = new SelectList(Lmslentities);
 
-            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
-            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
-
-
-            return View();
+           return View();
         }
 
 
