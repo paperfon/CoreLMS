@@ -77,10 +77,10 @@ namespace CoreLMS.Controllers
                 {
 
                     string projectDir = System.IO.Directory.GetCurrentDirectory();
-                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/DOX");
+                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/Dox");
                     FileName = Path.GetFileName(model.File.FileName);
                     filePath = Path.Combine(uploadsFolder, FileName);
-                    model.File.CopyTo(new FileStream(filePath, FileMode.Append));
+                    model.File.CopyTo(new FileStream(filePath, FileMode.Create));
 
                 }
                
@@ -152,10 +152,10 @@ namespace CoreLMS.Controllers
                 {
 
                     string projectDir = System.IO.Directory.GetCurrentDirectory();
-                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/DOX");
+                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/Dox");
                     FileName = Path.GetFileName(model.File.FileName); 
                     filePath = Path.Combine(uploadsFolder,FileName);
-                    model.File.CopyTo(new FileStream(filePath, FileMode.Append));
+                    model.File.CopyTo(new FileStream(filePath, FileMode.Create));
                 }
 
 
