@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoreLMS.Core.Models;
 using CoreLMS.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CoreLMS.Controllers
 {
+    [Authorize]
     public class ModulesController : Controller
     {
         private readonly ApplicationDbContext _context;
