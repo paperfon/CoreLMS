@@ -61,18 +61,18 @@ namespace CoreLMS
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-               Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Dox")),
-                RequestPath = "/wwwroot/Dox"
-            });
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Dox")),
-                RequestPath = "/wwwroot/Dox"
-            });
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //   Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Dox")),
+            //    RequestPath = "/wwwroot/Dox"
+            //});
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Dox")),
+            //    RequestPath = "/wwwroot/Dox"
+            //});
 
             app.UseRouting();
 
@@ -83,7 +83,7 @@ namespace CoreLMS
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Courses}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
