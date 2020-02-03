@@ -62,6 +62,7 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ActivityId">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.ActivityId">Details</a> |
+                    <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.ActivityId" asp-route-name="Activity">Upload Documents</a>
                     @*<a asp-action="Delete" asp-route-id="@item.ActivityId">Delete</a>*@
                 </td>
             </tr>

@@ -8,3 +8,21 @@ $(document).ready(function () {
         $(this).next('.custom-file-label').html(fileName);
     });
 });
+
+$(document).ready(function () {
+    $("#selectedentity").on("change", function () {
+        $.getJSON("/Documents/GetEntityNamelist", { entityname: $("#selectedentity").val() }, function (d) {
+
+            var row = "";
+            $("#selectedentityid").empty();
+            $.each(d, function (i, v) {
+                row += "<option value=" + v.value + ">" + v.text + "</option>";
+
+            });
+            $("#selectedentityid").append(row);
+
+        });
+
+
+    });
+});

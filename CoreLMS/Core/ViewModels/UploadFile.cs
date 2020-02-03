@@ -21,7 +21,12 @@ namespace CoreLMS.Core.ViewModels
         public IFormFile File { get; set; }
 
         public Entity LMSEntity { get; set; }
-        
+
+        public List<string> EntityName { get; set; }
+
+        public string selectedentity { get; set; }
+        public int selectedentityid { get; set; }
+
     }
 
     public enum Entity

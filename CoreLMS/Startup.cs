@@ -13,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CoreLMS.Core.Models;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace CoreLMS
 {
@@ -39,6 +41,8 @@ namespace CoreLMS
             services.AddControllersWithViews();
             
             services.AddRazorPages();
+
+            services.AddDirectoryBrowser();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +61,18 @@ namespace CoreLMS
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //   Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Dox")),
+            //    RequestPath = "/wwwroot/Dox"
+            //});
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","Dox")),
+            //    RequestPath = "/wwwroot/Dox"
+            //});
 
             app.UseRouting();
 
@@ -67,7 +83,7 @@ namespace CoreLMS
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Courses}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }
