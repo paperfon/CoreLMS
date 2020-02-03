@@ -76,11 +76,13 @@ namespace CoreLMS.Controllers
                 if (model.File != null)
                 {
 
+
                     string projectDir = System.IO.Directory.GetCurrentDirectory();
-                    var uploadsFolder = Path.Combine(projectDir, "Dox");
+                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/DOX");
                     FileName = Path.GetFileName(model.File.FileName);
                     filePath = Path.Combine(uploadsFolder, FileName);
-                    model.File.CopyTo(new FileStream(filePath, FileMode.Create));
+                    model.File.CopyTo(new FileStream(filePath, FileMode.Append));
+
                 }
                
                 var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
@@ -130,10 +132,11 @@ namespace CoreLMS.Controllers
         [HttpGet]
         public ViewResult Create(int? id, string name)
         {
-            List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
-            ViewBag.lmsentitylist = new SelectList(Lmslentities);
+            
+            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
+            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
 
-           return View();
+            return View();
         }
 
 
