@@ -46,6 +46,15 @@ namespace CoreLMS.Controllers
             return View(course);
         }
 
+        public IActionResult CheckCourseStartDate(DateTime startdate)
+        {
+            if (_context.Course.Any(s => s.StartDate < DateTime.UtcNow))
+            {
+                return Json($"{startdate} is not valid");
+            }
+
+            return Json(true);
+        }
         // GET: Courses/Create
         public IActionResult Create()
         {
@@ -172,5 +181,7 @@ namespace CoreLMS.Controllers
 
             return View(model);
         }
+
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,7 +13,11 @@ namespace CoreLMS.Core.Models
         
         [Required]
         public string ModuleName { get; set; }
+
+        [Remote(action: "CheckModuleStartDate", controller: "Modules", AdditionalFields = "CourseId")]
         public DateTime StartDate { get; set; }
+
+        [Remote(action: "CheckModuleEndDate", controller: "Modules")]
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
 

@@ -22,6 +22,32 @@ namespace CoreLMS.Controllers
             _context = context;
         }
 
+
+        public IActionResult CheckActivitesStartDate(DateTime startdate, int moduleid)
+        {
+            //var moduleid = _context.Activity.Select(c => c.ModuleId).FirstOrDefault();
+            var modulestartdate = _context.Module.Where(c => c.ModuleId == moduleid).Select(s => s.StartDate).FirstOrDefault();
+            if (_context.Activity
+                .Any(s => s.StartDate > modulestartdate))
+            {
+                return Json($"{startdate} is not valid");
+            }
+
+            return Json(true);
+        }
+
+        public IActionResult CheckActivitesEndDate(DateTime enddate)
+        {
+
+            if (_context.Activity
+                .Any(s => s.EndDate > s.StartDate))
+            {
+                return Json($"{enddate} is not valid");
+            }
+
+            return Json(true);
+        }
+
         // GET: Activities
         public async Task<IActionResult> Index()
         {

@@ -21,6 +21,34 @@ namespace CoreLMS.Controllers
             _context = context;
         }
 
+        public IActionResult CheckModuleStartDate(DateTime startdate, int courseid)
+        {
+            //var courseid = _context.Module
+            //    .Where(m => m.ModuleId==id)
+            //    .Select(c => c.CourseId).First();
+
+            var coursestartdate = _context.Course.Where(c => c.CourseId == courseid).Select(s => s.StartDate).FirstOrDefault();
+            if (_context.Module                
+                .Any(s => s.StartDate > coursestartdate))
+            {
+                return Json($"{startdate} is not valid");
+            }
+
+            return Json(true);
+        }
+
+        public IActionResult CheckModuleEndDate(DateTime enddate)
+        {
+
+            if (_context.Module
+                .Any(s => s.EndDate > s.StartDate ))
+            {
+                return Json($"{enddate} is not valid");
+            }
+
+            return Json(true);
+        }
+
         // GET: Modules
         public async Task<IActionResult> Index()
         {
