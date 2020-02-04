@@ -99,16 +99,22 @@ namespace CoreLMS.Controllers
                 if (model.selectedentity == "Course")
                 {
                     document.CourseId = model.selectedentityid;
+                    
                 }
                 else
                if (model.selectedentity == "Module")
                 {
                     document.ModuleId = model.selectedentityid;
+                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
+                     
                 }
                 else
                if (model.selectedentity == "Activity")
                 {
                     document.ActivityId = model.selectedentityid;
+                    document.ModuleId = _context.Activity.FirstOrDefault(a => a.ActivityId == document.ActivityId).ModuleId;
+                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
+
                 }
 
 
@@ -179,11 +185,15 @@ namespace CoreLMS.Controllers
                if (name == "Module")
                 {
                     document.ModuleId = id;
+                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
                 }
                 else
                if (name == "Activity")
                 {
                     document.ActivityId = id;
+                    document.ModuleId = _context.Activity.FirstOrDefault(a => a.ActivityId == document.ActivityId).ModuleId;
+                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
+
                 }
 
                 if (ModelState.IsValid)
