@@ -1,21 +1,26 @@
 ﻿
 <div class="sidenav">
-    <ul>
-        <li>
-            <a  asp-controller="Courses" asp-action="Index">All Courses</a>
+    <ul class="navbar-nav flex-grow-1">
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Courses" asp-action="Index">Courses</a>
         </li>
-        <li>
-            <a asp-controller="Home" asp-action="Index">All Students</a>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Modules" asp-action="Index">Modules</a>
         </li>
-        <li>
-            <a asp-controller="Modules" asp-action="Index">Modules</a>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Activities" asp-action="Index">Activities</a>
         </li>
-        <li>
-            <a asp-controller="Activities" asp-action="Index">Activities</a>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Documents" asp-action="Index">Documents</a>
         </li>
-        <li>
-            <a asp-controller="Documents" asp-action="Index">All Documents</a>
-        </li>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            </li>
+        }
+
     </ul>
 </div>
 

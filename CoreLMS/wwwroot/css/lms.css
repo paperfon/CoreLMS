@@ -1,29 +1,13 @@
-﻿
-.sidenav {
-    width: 200px;
-    /*position: fixed;*/
-    z-index: 1;
-    /*top: 60px;
-    left: 10px;*/
-    background: #eee;
-    overflow-x: hidden;
-    padding: 20px;
+﻿.lms-admin {
+    display: flex;
 }
-
-    .sidenav a {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 14px;
-        color: #343a40;
-        display: block;
+    .lms-admin main {
+        min-width: calc(100% - 155px);
     }
 
-        .sidenav a:hover {
-            color: #064579;
-        }
-
-    .sidenav ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
+.sidenav {
+    min-width: 155px;
+    background: #eee;
+    padding: 20px;
+    margin-right: 20px;
+}
