@@ -14,11 +14,11 @@ namespace CoreLMS.Core.Models
         [Required]
         public string CourseName { get; set; }
 
+        [DataType(DataType.Date)]
         [Remote(action: "CheckCourseStartDate", controller: "Courses")]
-        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy/mm/dd}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
 
-        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy/mm/dd}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
 
