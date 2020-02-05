@@ -15,29 +15,28 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DocumentName)
+                @Html.ActionLink("DocumentName", "Index", new { sortOrder = ViewBag.DocumentNameSortParm})
             </th>
             <th>
-            <th>
-                @Html.DisplayNameFor(model => model.UploadTime)
+                @Html.ActionLink("UploadTime", "Index", new { sortOrder = ViewBag.UploadTimeSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DocumentPath)
+                @Html.ActionLink("DocumentPath", "Index", new { sortOrder = ViewBag.DocumentPathSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TypeOfDocument)
+                @Html.ActionLink("TypeOfDocument", "Index", new { sortOrder = ViewBag.TypeOfDocumentSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LMSUser)
+                @Html.ActionLink("LMSUser", "Index", new { sortOrder = ViewBag.DocumentNameSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Course)
+                @Html.ActionLink("Course", "Index", new { sortOrder = ViewBag.CourseSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Module)
+                @Html.ActionLink("Module", "Index", new { sortOrder = ViewBag.ModuleSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Activity)
+                @Html.ActionLink("Activity", "Index", new { sortOrder = ViewBag.ActivitySortParm })
             </th>
             <th></th>
         </tr>

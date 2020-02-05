@@ -17,13 +17,10 @@ $(document).ready(function () {
             $("#selectedentityid").empty();
             $.each(d, function (i, v) {
                 row += "<option value=" + v.value + ">" + v.text + "</option>";
-
             });
             $("#selectedentityid").append(row);
 
         });
-
-
     });
 });
 

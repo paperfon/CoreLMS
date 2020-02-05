@@ -250,15 +250,68 @@ namespace CoreLMS.Controllers
 
         public ActionResult Index(string sortOrder)
         {
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            //ViewBag.DateSortParm = sortOrder == "Date" ? "Date_desc" : "Date";
-            IQueryable<Document> documents = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module) ;
-            
+            ViewBag.DocumentNameSortParm = String.IsNullOrEmpty(sortOrder) ? "DocumentName_desc" : "";
+            ViewBag.UploadTimeSortParm = sortOrder == "UploadTime" ? "UploadTime_desc" : "UploadTime";
+            ViewBag.TypeOfDocumentSortParm = sortOrder == "TypeOfDocument" ? "TypeOfDocument_desc" : "TypeOfDocument";
+            ViewBag.LMSUserSortParm = sortOrder == "LMSUser" ? "LMSUser_desc" : "LMSUser";
+            ViewBag.CourseSortParm = sortOrder == "Course" ? "Course_desc" : "Course";
+            ViewBag.ModuleSortParm = sortOrder == "Module" ? "Module_desc" : "Module";
+            ViewBag.ActivitySortParm = sortOrder == "Activity" ? "Activity_desc" : "Activity";
+            ViewBag.DocumentPathSortParm = sortOrder == "DocumentPath" ? "DocumentPath_desc" : "DocumentPath";
 
+            IQueryable<Document> documents = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module) ;
+
+            foreach (var item in documents)
+            {
+                ViewBag.file = item.DocumentPath;
+                item.DocumentPath = Path.GetFileName(item.DocumentPath);
+            }
             switch (sortOrder)
             {
-                case "Name_desc":
+                case "DocumentName_desc":
                     documents = documents.OrderByDescending(d=>d.DocumentName);
+                    break;
+                case "UploadTime_desc":
+                    documents = documents.OrderByDescending(d => d.UploadTime);
+                    break;
+                case "UploadTime":
+                    documents = documents.OrderBy(d => d.UploadTime);
+                    break;
+                case "TypeOfDocument_desc":
+                    documents = documents.OrderByDescending(d => d.TypeOfDocument);
+                    break;
+                case "TypeOfDocument":
+                    documents = documents.OrderBy(d => d.TypeOfDocument);
+                    break;
+                case "LMSUser_desc":
+                    documents = documents.OrderByDescending(d => d.LMSUser);
+                    break;
+                case "LMSUser":
+                    documents = documents.OrderBy(d => d.LMSUser);
+                    break;
+                case "Course_desc":
+                    documents = documents.OrderByDescending(d => d.TypeOfDocument);
+                    break;
+                case "Course":
+                    documents = documents.OrderBy(d => d.Course.CourseName);
+                    break;
+                case "Module_desc":
+                    documents = documents.OrderByDescending(d => d.Course.CourseName);
+                    break;
+                case "Module":
+                    documents = documents.OrderBy(d => d.Module.ModuleName);
+                    break;
+                case "Activity_desc":
+                    documents = documents.OrderByDescending(d => d.Activity.ActivityName);
+                    break;
+                case "Activity":
+                    documents = documents.OrderBy(d => d.Activity.ActivityName);
+                    break;
+                case "DocumentPath_desc":
+                    documents = documents.OrderByDescending(d => d.DocumentPath);
+                    break;
+                case "DocumentPath":
+                    documents = documents.OrderBy(d => d.DocumentPath);
                     break;
                 default:
                     documents = documents.OrderBy(d => d.DocumentName);
