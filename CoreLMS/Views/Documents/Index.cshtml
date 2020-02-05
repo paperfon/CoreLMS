@@ -11,6 +11,15 @@
 <p>
     <a asp-action="UploadDocument">Upload New Document</a>
 </p>
+<form asp-action="Filter">
+    <div class="input-group mb-3">
+        <input type="text" name="documentname" class="form-control" placeholder="Search on title" />
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-search">&emsp;Search</i></button>
+        </div>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>

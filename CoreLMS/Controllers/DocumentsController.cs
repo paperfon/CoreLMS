@@ -23,6 +23,15 @@ namespace CoreLMS.Controllers
 
         }
 
+        public async Task<IActionResult> Filter(string documentname)
+        {
+
+
+            var filtermodel = string.IsNullOrWhiteSpace(documentname) ?
+                await _context.Document.ToListAsync() :
+                await _context.Document.Where(m => m.DocumentName.Contains(documentname)).ToListAsync();
+            return View(nameof(Index), filtermodel);
+        }
 
         public JsonResult GetEntityNamelist(string entityname)
         {

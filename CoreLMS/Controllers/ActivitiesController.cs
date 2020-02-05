@@ -30,7 +30,7 @@ namespace CoreLMS.Controllers
                 .Where(c => c.ModuleId == moduleid)
                 .Select(s => s.StartDate)
                 .FirstOrDefault();
-            if (startdate >= modulestartdate)
+            if (startdate > modulestartdate)
             {
                 return Json($"{startdate} is not valid");
             }
@@ -41,7 +41,7 @@ namespace CoreLMS.Controllers
         public IActionResult CheckActivitesEndDate(DateTime enddate, DateTime startdate)
         {
 
-            if (enddate > startdate)
+            if (enddate < startdate)
             {
                 return Json($"{enddate} is not valid");
             }
