@@ -25,10 +25,13 @@ namespace CoreLMS.Controllers
 
         public IActionResult CheckActivitesStartDate(DateTime startdate, int moduleid)
         {
-            //var moduleid = _context.Activity.Select(c => c.ModuleId).FirstOrDefault();
-            var modulestartdate = _context.Module.Where(c => c.ModuleId == moduleid).Select(s => s.StartDate).FirstOrDefault();
+            
+            var modulestartdate = _context.Module
+                .Where(c => c.ModuleId == moduleid)
+                .Select(s => s.StartDate)
+                .FirstOrDefault();
             if (_context.Activity
-                .Any(s => s.StartDate > modulestartdate))
+                .Any(s => s.StartDate >= modulestartdate))
             {
                 return Json($"{startdate} is not valid");
             }

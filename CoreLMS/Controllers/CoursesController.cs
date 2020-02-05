@@ -48,7 +48,7 @@ namespace CoreLMS.Controllers
 
         public IActionResult CheckCourseStartDate(DateTime startdate)
         {
-            if (_context.Course.Any(s => s.StartDate < DateTime.UtcNow))
+            if (_context.Course.Any(s => s.StartDate >= DateTime.UtcNow))
             {
                 return Json($"{startdate} is not valid");
             }
