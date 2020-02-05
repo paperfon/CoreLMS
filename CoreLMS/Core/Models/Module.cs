@@ -17,7 +17,7 @@ namespace CoreLMS.Core.Models
         [Remote(action: "CheckModuleStartDate", controller: "Modules", AdditionalFields = "CourseId")]
         public DateTime StartDate { get; set; }
 
-        [Remote(action: "CheckModuleEndDate", controller: "Modules")]
+        [Remote(action: "CheckModuleEndDate", controller: "Modules" ,AdditionalFields = "StartDate")]
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
 

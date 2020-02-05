@@ -50,13 +50,8 @@ namespace CoreLMS.Controllers
 
 
             var filtermodel = string.IsNullOrWhiteSpace(coursename) ?
-                 await _context.Course.ToListAsync() :
-                await _context.Course.Where(m => m.CourseName == coursename).ToListAsync();
-
-
-
-
-
+                await _context.Course.ToListAsync() :
+                await _context.Course.Where(m => m.CourseName.Contains(coursename)).ToListAsync();
             return View(nameof(Index), filtermodel);
         }
 
@@ -69,6 +64,7 @@ namespace CoreLMS.Controllers
 
             return Json(true);
         }
+
         // GET: Courses/Create
         public IActionResult Create()
         {

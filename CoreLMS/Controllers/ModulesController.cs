@@ -28,8 +28,7 @@ namespace CoreLMS.Controllers
                 .Where(c => c.CourseId == courseid)
                 .Select(s => s.StartDate)
                 .FirstOrDefault();
-            if (_context.Module                
-                .Any(s => s.StartDate >= coursestartdate))
+            if (startdate >= coursestartdate)
             {
                 return Json($"{startdate} is not valid");
             }
@@ -37,17 +36,27 @@ namespace CoreLMS.Controllers
             return Json(true);
         }
 
-        public IActionResult CheckModuleEndDate(DateTime enddate)
+        public IActionResult CheckModuleEndDate(DateTime enddate, DateTime startdate)
         {
 
-            if (_context.Module
-                .Any(s => s.EndDate > s.StartDate ))
+            if (enddate > startdate )
             {
                 return Json($"{enddate} is not valid");
             }
 
             return Json(true);
         }
+
+        public async Task<IActionResult> Filter(string modulename)
+        {
+
+
+            var filtermodel = string.IsNullOrWhiteSpace(modulename) ?
+                await _context.Module.ToListAsync() :
+                await _context.Module.Where(m => m.ModuleName.Contains(modulename)).ToListAsync();
+            return View(nameof(Index), filtermodel);
+        }
+
 
         // GET: Modules
         public async Task<IActionResult> Index()
