@@ -22,9 +22,45 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            return View(await _context.Course.ToListAsync());
+            ViewBag.CourseNameSortParm = String.IsNullOrEmpty(sortOrder) ? "CourseName_desc" : "";
+            ViewBag.StartDateSortParm = sortOrder == "StartDate" ? "StartDate_desc" : "StartDate";
+            ViewBag.EndDateSortParm = sortOrder == "EndDate" ? "EndDate_desc" : "EndDate";
+            ViewBag.DescriptionSortParm = sortOrder == "Description" ? "Description_desc" : "Description";
+
+            IQueryable<Course> course =  _context.Course;
+
+            switch (sortOrder)
+            {
+                case "CourseName_desc":
+                    course = course.OrderByDescending(s => s.CourseName);
+                    break;
+                case "StartDate_desc":
+                    course = course.OrderByDescending(s => s.StartDate);
+                    break;
+                case "StartDate":
+                    course = course.OrderBy(s => s.StartDate);
+                    break;
+                case "EndDate_desc":
+                    course = course.OrderByDescending(s => s.EndDate);
+                    break;
+                case "EndDate":
+                    course = course.OrderBy(s => s.EndDate);
+                    break;
+                case "Description_desc":
+                    course = course.OrderByDescending(s => s.Description);
+                    break;
+                case "Description":
+                    course = course.OrderBy(s => s.Description);
+                    break;
+                default:
+                    course = course.OrderBy(s => s.CourseName);
+                    break;
+            }
+
+
+            return View(await course.ToListAsync());
         }
 
         // GET: Courses/Details/5
@@ -76,7 +112,7 @@ namespace CoreLMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CourseId,CourseName,StartDate,Description")] Course course)
+        public async Task<IActionResult> Create([Bind("CourseId,CourseName,StartDate,EndDate,Description")] Course course)
         {
             if (ModelState.IsValid)
             {

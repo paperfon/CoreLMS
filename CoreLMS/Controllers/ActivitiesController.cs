@@ -60,10 +60,59 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Activities
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            var applicationDbContext = _context.Activity.Include(a => a.Module);
-            return View(await applicationDbContext.ToListAsync());
+            ViewBag.ActivityNameSortParm = String.IsNullOrEmpty(sortOrder) ? "ActivityName_desc" : "";
+            ViewBag.StartDateSortParm = sortOrder == "StartDate" ? "StartDate_desc" : "StartDate";
+            ViewBag.EndDateSortParm = sortOrder == "EndDate" ? "EndDate_desc" : "EndDate";
+            ViewBag.DescriptionSortParm = sortOrder == "Description" ? "Description_desc" : "Description";
+            ViewBag.ActivityTypeSortParm = sortOrder == "ActivityType" ? "ActivityType_desc" : "ActivityType";
+            ViewBag.ModuleSortParm = sortOrder == "Module" ? "Module_desc" : "Module";
+
+            IQueryable<Activity> activity = _context.Activity.Include(a => a.Module);
+
+            switch (sortOrder)
+            {
+                case "ActivityName_desc":
+                    activity = activity.OrderByDescending(s => s.ActivityName);
+                    break;
+                case "StartDate_desc":
+                    activity = activity.OrderByDescending(s => s.StartDate);
+                    break;
+                case "StartDate":
+                    activity = activity.OrderBy(s => s.StartDate);
+                    break;
+                case "EndDate_desc":
+                    activity = activity.OrderByDescending(s => s.EndDate);
+                    break;
+                case "EndDate":
+                    activity = activity.OrderBy(s => s.EndDate);
+                    break;
+                case "Description_desc":
+                    activity = activity.OrderByDescending(s => s.Description);
+                    break;
+                case "Description":
+                    activity = activity.OrderBy(s => s.Description);
+                    break;
+                case "ActivityType_desc":
+                    activity = activity.OrderByDescending(s => s.ActivityType);
+                    break;
+                case "ActivityType":
+                    activity = activity.OrderBy(s => s.ActivityType);
+                    break;
+                case "Module_desc":
+                    activity = activity.OrderByDescending(s => s.Module);
+                    break;
+                case "Module":
+                    activity = activity.OrderBy(s => s.Module);
+                    break;
+                default:
+                    activity = activity.OrderBy(s => s.ActivityName);
+                    break;
+            }
+
+
+            return View(await activity.ToListAsync());
         }
 
         // GET: Activities/Details/5

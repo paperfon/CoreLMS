@@ -25,22 +25,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ActivityName)
+                @Html.ActionLink("ActivityName", "Index", new { sortOrder = ViewBag.ActivityNameSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                @Html.ActionLink("StartDate", "Index", new { sortOrder = ViewBag.StartDateSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                @Html.ActionLink("EndDate", "Index", new { sortOrder = ViewBag.EndDateSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DescriptionSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ActivityType)
+                @Html.ActionLink("ActivityType", "Index", new { sortOrder = ViewBag.ActivityTypeSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Module)
+                @Html.ActionLink("Module", "Index", new { sortOrder = ViewBag.ModuleSortParm })
             </th>
             <th></th>
         </tr>

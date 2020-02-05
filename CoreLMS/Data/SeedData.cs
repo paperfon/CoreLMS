@@ -148,6 +148,7 @@ namespace CoreLMS.Data
                         {
                             CourseName = fake.Company.CompanyName(),
                             StartDate = fake.Date.Future(),
+                            EndDate = fake.Date.Future(),
                             Description = fake.Lorem.Paragraph()
                         };
                         courses.Add(course);

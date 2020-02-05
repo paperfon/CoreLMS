@@ -59,12 +59,53 @@ namespace CoreLMS.Controllers
 
 
         // GET: Modules
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            var applicationDbContext = _context.Module
-                .Include(c => c.Course);
-            var model = await applicationDbContext.ToListAsync();
-            return View(model);
+
+            ViewBag.ModuleNameSortParm = String.IsNullOrEmpty(sortOrder) ? "ModuleName_desc" : "";
+            ViewBag.StartDateSortParm = sortOrder == "StartDate" ? "StartDate_desc" : "StartDate";
+            ViewBag.EndDateSortParm = sortOrder == "EndDate" ? "EndDate_desc" : "EndDate";
+            ViewBag.DescriptionSortParm = sortOrder == "Description" ? "Description_desc" : "Description";
+            ViewBag.CourseSortParm = sortOrder == "Course" ? "Course_desc" : "Course";
+
+
+            IQueryable<Module> module = _context.Module.Include(c => c.Course);
+
+            switch (sortOrder)
+            {
+                case "ModuleName_desc":
+                    module = module.OrderByDescending(s => s.ModuleName);
+                    break;
+                case "StartDate_desc":
+                    module = module.OrderByDescending(s => s.StartDate);
+                    break;
+                case "StartDate":
+                    module = module.OrderBy(s => s.StartDate);
+                    break;
+                case "EndDate_desc":
+                    module = module.OrderByDescending(s => s.EndDate);
+                    break;
+                case "EndDate":
+                    module = module.OrderBy(s => s.EndDate);
+                    break;
+                case "Description_desc":
+                    module = module.OrderByDescending(s => s.Description);
+                    break;
+                case "Description":
+                    module = module.OrderBy(s => s.Description);
+                    break;
+                case "Course_desc":
+                    module = module.OrderByDescending(s => s.Course);
+                    break;
+                case "Course":
+                    module = module.OrderBy(s => s.Course);
+                    break;
+                default:
+                    module = module.OrderBy(s => s.ModuleName);
+                    break;
+            }
+
+            return View(await module.ToListAsync());
         }
 
         // GET: Modules/Details/5

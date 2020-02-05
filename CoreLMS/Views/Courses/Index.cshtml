@@ -23,13 +23,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CourseName)
+                @Html.ActionLink("CourseName", "Index", new { sortOrder = ViewBag.CourseNameSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                @Html.ActionLink("StartDate", "Index", new { sortOrder = ViewBag.StartDateSortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.ActionLink("EndDate", "Index", new { sortOrder = ViewBag.EndDateSortParm })
+            </th>
+            <th>
+                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DescriptionSortParm })
             </th>
             <th></th>
         </tr>
@@ -37,23 +40,26 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CourseName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.CourseId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.CourseId">Details</a> |
-                    <a asp-action="CoursesModules" asp-route-id="@item.CourseId">Modules</a> |
-                    <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.CourseId" asp-route-name="Course">Upload Documents</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CourseId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CourseId">Details</a> |
+                <a asp-action="CoursesModules" asp-route-id="@item.CourseId">Modules</a> |
+                <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.CourseId" asp-route-name="Course">Upload Documents</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

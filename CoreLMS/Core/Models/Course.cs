@@ -16,6 +16,8 @@ namespace CoreLMS.Core.Models
 
         [Remote(action: "CheckCourseStartDate", controller: "Courses")]
         public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
         public string Description { get; set; }
 
         public ICollection<Module> CourseModules { get; set; }
