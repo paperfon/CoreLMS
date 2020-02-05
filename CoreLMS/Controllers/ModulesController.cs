@@ -39,7 +39,7 @@ namespace CoreLMS.Controllers
         public IActionResult CheckModuleEndDate(DateTime enddate, DateTime startdate)
         {
 
-            if (enddate > startdate )
+            if (enddate < startdate )
             {
                 return Json($"{enddate} is not valid");
             }
