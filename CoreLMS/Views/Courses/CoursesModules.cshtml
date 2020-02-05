@@ -6,63 +6,73 @@
 
 <h1>CoursesModules:</h1>
 
-<h2>  
-            @Model.First().Course.CourseName
+@if (Model.Count() == 0)
+{
+
+    <p class="text-warning"><strong>No Modules to this course..</strong></p>
+
+}
+else
+{
+<h2>
+    @Model.First().Course.CourseName
 </h2>
+}
 
 
 
 
-            <p>
-                <a asp-controller="Modules" asp-action="Create" >Create New Module</a>
-            </p>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.ModuleName)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.StartDate)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.EndDate)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Description)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Course)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.ModuleName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.StartDate)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.EndDate)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Description)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Course.CourseName)
-                            </td>
-                            <td>
-                                <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.ModuleId">Edit</a> |
-                                <a asp-action="Details" asp-route-id="@item.ModuleId">Details</a> |
-                                <a asp-action="ModulesActivities" asp-route-id="@item.ModuleId">Activities</a> |
-                                <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.ModuleId" asp-route-name="Module">Upload Documents</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+
+<p>
+    <a asp-controller="Modules" asp-action="Create">Create New Module</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ModuleName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModuleName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Course.CourseName)
+                </td>
+                <td>
+                    <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.ModuleId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ModuleId">Details</a> |
+                    <a asp-action="ModulesActivities" asp-route-id="@item.ModuleId">Activities</a> |
+                    <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.ModuleId" asp-route-name="Module">Upload Documents</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

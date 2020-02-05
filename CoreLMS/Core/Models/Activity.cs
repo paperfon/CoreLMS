@@ -15,8 +15,10 @@ namespace CoreLMS.Core.Models
         public string ActivityName { get; set; }
 
         [Remote(action: "CheckActivitesStartDate", controller: "Activities", AdditionalFields ="ModuleId")]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy/mm/dd}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
 
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:yyyy/mm/dd}", ApplyFormatInEditMode = true)]
         [Remote(action: "CheckActivitesEndDate", controller: "Activities", AdditionalFields = "StartDate")]
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
