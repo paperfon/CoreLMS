@@ -45,6 +45,20 @@ namespace CoreLMS.Controllers
 
             return View(course);
         }
+        public async Task<IActionResult> Filter(string coursename)
+        {
+
+
+            var filtermodel = string.IsNullOrWhiteSpace(coursename) ?
+                 await _context.Course.ToListAsync() :
+                await _context.Course.Where(m => m.CourseName == coursename).ToListAsync();
+
+
+
+
+
+            return View(nameof(Index), filtermodel);
+        }
 
         public IActionResult CheckCourseStartDate(DateTime startdate)
         {
