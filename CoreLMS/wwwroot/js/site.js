@@ -26,3 +26,42 @@ $(document).ready(function () {
 
     });
 });
+
+
+$(document).ready(function () {
+    $("#CourseId").on("click", function () {
+        $("ModuleId").empty().append("<option>Loading modules</option>");
+        $.getJSON("/Documents/GetModules", { courseid: $("#CourseId").val() }, function (d) {
+
+            var row = "";
+            $("#ModuleId").empty();
+            $.each(d, function (i, v) {
+                row += "<option value=" + v.value + ">" + v.text + "</option>";
+
+            });
+            $("#ModuleId").append(row);
+
+        });
+
+
+    });
+});
+
+$(document).ready(function () {
+    $("#ModuleId").on("click", function () {
+        $("ActivityId").empty().append("<option>Loading modules</option>");
+        $.getJSON("/Documents/GetActivities", { moduleid: $("#ModuleId").val() }, function (d) {
+
+            var row = "";
+            $("#ActivityId").empty();
+            $.each(d, function (i, v) {
+                row += "<option value=" + v.value + ">" + v.text + "</option>";
+
+            });
+            $("#ActivityId").append(row);
+
+        });
+
+
+    });
+});

@@ -1,5 +1,6 @@
 ﻿@model CoreLMS.Core.Models.Document
 
+
 @{
     ViewData["Title"] = "Edit";
 }
@@ -8,36 +9,31 @@
 
 <h4>Document</h4>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="DocumentId" />
+            <input type="hidden" asp-for="LMSUserId" />
+            <input type="hidden" asp-for="UploadTime" />
+            <input type="hidden" asp-for="DocumentPath" />
             <div class="form-group">
                 <label asp-for="DocumentName" class="control-label"></label>
                 <input asp-for="DocumentName" class="form-control" />
                 <span asp-validation-for="DocumentName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="UploadTime" class="control-label"></label>
-                <input asp-for="UploadTime" class="form-control" />
-                <span asp-validation-for="UploadTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DocumentPath" class="control-label"></label>
-                <input asp-for="DocumentPath" class="form-control" />
-                <span asp-validation-for="DocumentPath" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="TypeOfDocument" class="control-label"></label>
-                <select asp-for="TypeOfDocument" class="form-control"></select>
+                <select asp-for="TypeOfDocument" class="form-control" asp-items="@Html.GetEnumSelectList<TypeOfDoc>()"></select>
                 <span asp-validation-for="TypeOfDocument" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LMSUserId" class="control-label"></label>
-                <select asp-for="LMSUserId" class="form-control" asp-items="ViewBag.LMSUserId"></select>
-                <span asp-validation-for="LMSUserId" class="text-danger"></span>
-            </div>
+            @*<div class="form-group">
+            <label asp-for="LMSUserId" class="control-label"></label>
+            <select asp-for="LMSUserId" class="form-control" asp-items="ViewBag.LMSUserId"></select>
+            <span asp-validation-for="LMSUserId" class="text-danger"></span>
+        </div>*@
             <div class="form-group">
                 <label asp-for="CourseId" class="control-label"></label>
                 <select asp-for="CourseId" class="form-control" asp-items="ViewBag.CourseId"></select>
@@ -45,13 +41,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="ModuleId" class="control-label"></label>
-                <select asp-for="ModuleId" class="form-control" asp-items="ViewBag.ModuleId"></select>
-                <span asp-validation-for="ModuleId" class="text-danger"></span>
+                @Html.DropDownListFor(m => m.ModuleId, new SelectList(""), "---Select modules---", new { @class = "form-control" })
+
             </div>
             <div class="form-group">
                 <label asp-for="ActivityId" class="control-label"></label>
-                <select asp-for="ActivityId" class="form-control" asp-items="ViewBag.ActivityId"></select>
-                <span asp-validation-for="ActivityId" class="text-danger"></span>
+                @Html.DropDownListFor(m => m.ActivityId, new SelectList(""), "---Select Activities---", new { @class = "form-control" })
+
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

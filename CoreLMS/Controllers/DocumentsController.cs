@@ -15,19 +15,19 @@ namespace CoreLMS.Controllers
     public class DocumentsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        
+
 
         public DocumentsController(ApplicationDbContext context)
         {
             _context = context;
-            
+
         }
 
-        
+
         public JsonResult GetEntityNamelist(string entityname)
         {
-           
-                
+
+
             if (entityname == "Course")
             {
                 return Json(_context.Course.Select(c => new SelectListItem { Value = c.CourseId.ToString(), Text = c.CourseName }).ToList());
@@ -48,16 +48,48 @@ namespace CoreLMS.Controllers
 
         }
 
-        
+
+        public JsonResult GetModules(int courseid)
+        {
+            var modulelist = _context.Module.Where(m => m.CourseId == courseid).Select(m => new SelectListItem { Value = m.ModuleId.ToString(), Text = m.ModuleName }).ToList();
+
+            if (modulelist.Count == 0)
+            {
+                return Json("No Modules for this course");
+            }
+            else
+            {
+                return Json(modulelist);
+            }
+
+        }
+        public JsonResult GetActivities(int moduleid)
+        {
+            var activitylist = _context.Activity.Where(a => a.ModuleId == moduleid).Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList();
+
+           if (activitylist.Count==0)
+            {
+                return Json("-1" , "No Activities for this course");
+            }
+           else
+            {
+                return Json(activitylist);
+            }
+
+
+        }
+
+
         [HttpGet]
         public ViewResult UploadDocument()
         {
             List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
             ViewBag.lmsentity = new SelectList(Lmslentities);
 
+
+
             List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
             ViewBag.typeOfDoclist = new SelectList(typeofdoc);
-
 
             return View();
         }
@@ -67,61 +99,15 @@ namespace CoreLMS.Controllers
         public async Task<IActionResult> UploadDocumentAsync(UploadFile model)
         {
 
-            
             if (ModelState.IsValid)
             {
-                string FileName = null;
-                string filePath = null;
-
-                if (model.File != null)
-                {
-
-                    string projectDir = System.IO.Directory.GetCurrentDirectory();
-                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/Dox");
-                    FileName = Path.GetFileName(model.File.FileName);
-                    filePath = Path.Combine(uploadsFolder, FileName);
-                    model.File.CopyTo(new FileStream(filePath, FileMode.Create));
-
-                }
-               
-                var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                var document = new Document
-                {
-
-                    DocumentName = model.DocumentName,
-                    UploadTime = DateTime.Now,
-                    DocumentPath = filePath,
-                    TypeOfDocument = model.TypeOfDocument,
-                    LMSUserId = user.Id
-
-                };
-
-                if (model.selectedentity == "Course")
-                {
-                    document.CourseId = model.selectedentityid;
-                    
-                }
-                else
-               if (model.selectedentity == "Module")
-                {
-                    document.ModuleId = model.selectedentityid;
-                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
-                     
-                }
-                else
-               if (model.selectedentity == "Activity")
-                {
-                    document.ActivityId = model.selectedentityid;
-                    document.ModuleId = _context.Activity.FirstOrDefault(a => a.ActivityId == document.ActivityId).ModuleId;
-                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
-
-                }
-
+                Document document = Fileupload(model);
 
                 if (ModelState.IsValid)
                 {
                     _context.Add(document);
                     await _context.SaveChangesAsync();
+                    TempData["AlertMessage"] = "Uploaded Successfully !!";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -130,20 +116,6 @@ namespace CoreLMS.Controllers
 
             return View();
         }
-
-
-
-        [Route("Create/{id}/{name}")]
-        [HttpGet]
-        public ViewResult Create(int? id, string name)
-        {
-            
-            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
-            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
-
-            return View();
-        }
-
 
         [Route("Create/{id}/{name}")]
         [HttpPost]
@@ -151,50 +123,9 @@ namespace CoreLMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                string FileName = null;
-                string filePath = null;
-
-                if (model.File != null)
-                {
-
-                    string projectDir = System.IO.Directory.GetCurrentDirectory();
-                    var uploadsFolder = Path.Combine(projectDir, "wwwroot/Dox");
-                    FileName = Path.GetFileName(model.File.FileName); 
-                    filePath = Path.Combine(uploadsFolder,FileName);
-                    model.File.CopyTo(new FileStream(filePath, FileMode.Create));
-                }
-
-
-                var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
-                var document = new Document
-                {
-
-                    DocumentName = model.DocumentName,
-                    UploadTime = DateTime.Now,
-                    DocumentPath = filePath,
-                    TypeOfDocument = model.TypeOfDocument,
-                    LMSUserId = user.Id
-
-                };
-
-                if (name == "Course")
-                {
-                    document.CourseId = id;
-                }
-                else
-               if (name == "Module")
-                {
-                    document.ModuleId = id;
-                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
-                }
-                else
-               if (name == "Activity")
-                {
-                    document.ActivityId = id;
-                    document.ModuleId = _context.Activity.FirstOrDefault(a => a.ActivityId == document.ActivityId).ModuleId;
-                    document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
-
-                }
+                model.selectedentity = name;
+                model.selectedentityid = id;
+                Document document = Fileupload(model);
 
                 if (ModelState.IsValid)
                 {
@@ -203,52 +134,137 @@ namespace CoreLMS.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-               
+
             }
 
             return View();
         }
+        private Document Fileupload(UploadFile model)
+        {
+            string FileName = null;
+            string filePath = null;
+
+            if (model.File != null)
+            {
+
+                string projectDir = System.IO.Directory.GetCurrentDirectory();
+                var uploadsFolder = Path.Combine(projectDir, "wwwroot/Dox");
+                FileName = Path.GetFileName(model.File.FileName);
+                filePath = Path.Combine(uploadsFolder, FileName);
+                model.File.CopyTo(new FileStream(filePath, FileMode.Create));
+
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var document = new Document
+            {
+
+                DocumentName = model.DocumentName,
+                UploadTime = DateTime.Now,
+                DocumentPath = filePath,
+                TypeOfDocument = model.TypeOfDocument,
+                LMSUserId = user.Id,
+
+            };
+
+            if (model.selectedentity == "Course")
+            {
+                document.CourseId = model.selectedentityid;
+
+            }
+            else
+           if (model.selectedentity == "Module")
+            {
+                document.ModuleId = model.selectedentityid;
+                document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
+
+            }
+            else
+           if (model.selectedentity == "Activity")
+            {
+                document.ActivityId = model.selectedentityid;
+                document.ModuleId = _context.Activity.FirstOrDefault(a => a.ActivityId == document.ActivityId).ModuleId;
+                document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
+
+            }
+
+            return document;
+        }
+
+
+        [Route("Create/{id}/{name}")]
+        [HttpGet]
+        public ViewResult Create(int? id, string name)
+        {
+
+            ViewBag.typeOfDoclist = new SelectList(Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList());
+
+            return View();
+        }
+
+
+
 
 
         public ViewResult GetListBasedonSelectedEntity(string entityname)
         {
             if (entityname == "Course")
             {
-                var Courselist = _context.Course.Select(c => c.CourseName).ToList();
-                ViewBag.entitylist = Courselist;
+                ViewBag.entitylist = _context.Course.Select(c => c.CourseName).ToList(); ;
             }
             else if (entityname == "Module")
             {
 
-                var Modulelist = _context.Module.Select(m => m.ModuleName).ToList();
-                ViewBag.entitylist = Modulelist;
+                ViewBag.entitylist = _context.Module.Select(m => m.ModuleName).ToList();
             }
             else if (entityname == "Activity")
             {
-                var Activitylist = _context.Activity.Select(a => a.ActivityName).ToList();
-                ViewBag.entitylist = Activitylist;
+                ViewBag.entitylist = _context.Activity.Select(a => a.ActivityName).ToList();
             }
 
             return View();
         }
 
-      
+
 
         // GET: Documents
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+
+
+
+        //    var applicationDbContext = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module);
+
+
+        //    foreach (var item in applicationDbContext)
+        //    {
+        //        ViewBag.file = item.DocumentPath;
+        //        item.DocumentPath = Path.GetFileName(item.DocumentPath);
+
+        //    }
+
+        //    return View(await applicationDbContext.ToListAsync());
+        //}
+
+
+
+        public ActionResult Index(string sortOrder)
         {
-            var applicationDbContext = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module);
-
-
-            foreach (var item in applicationDbContext)
-            {
-                ViewBag.file = item.DocumentPath;
-                item.DocumentPath = Path.GetFileName(item.DocumentPath);
-                
-            }
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            //ViewBag.DateSortParm = sortOrder == "Date" ? "Date_desc" : "Date";
+            IQueryable<Document> documents = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module) ;
             
 
-            return View(await applicationDbContext.ToListAsync());
+            switch (sortOrder)
+            {
+                case "Name_desc":
+                    documents = documents.OrderByDescending(d=>d.DocumentName);
+                    break;
+                default:
+                    documents = documents.OrderBy(d => d.DocumentName);
+                    break;
+            }
+            return View(documents.ToList());
         }
 
         // GET: Documents/Details/5
@@ -274,37 +290,6 @@ namespace CoreLMS.Controllers
             return View(document);
         }
 
-        // GET: Documents/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName");
-        //    ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName");
-        //    ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id");
-        //    ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName");
-        //    return View();
-        //}
-
-        // POST: Documents/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("DocumentId,DocumentName,UploadTime,DocumentPath,TypeOfDocument,LMSUserId,CourseId,ModuleId,ActivityId")] Document document)
-        //{
-        //    document.UploadTime = DateTime.Now;
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(document);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName", document.ActivityId);
-        //    ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", document.CourseId);
-        //    ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id", document.LMSUser);
-        //    ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName", document.ModuleId);
-        //    return View(document);
-        //}
-
         // GET: Documents/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -318,10 +303,12 @@ namespace CoreLMS.Controllers
             {
                 return NotFound();
             }
-            ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName", document.ActivityId);
+            document.LMSUserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name).Id;
+            
+
             ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", document.CourseId);
-            ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id", document.LMSUserId);
             ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName", document.ModuleId);
+            ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName", document.ActivityId);
             return View(document);
         }
 
@@ -337,10 +324,13 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
+            
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    document.UploadTime = DateTime.Now;
                     _context.Update(document);
                     await _context.SaveChangesAsync();
                 }
@@ -357,10 +347,10 @@ namespace CoreLMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName", document.ActivityId);
+           
             ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName", document.CourseId);
-            ViewData["LMSUserId"] = new SelectList(_context.Set<LMSUser>(), "Id", "Id", document.LMSUserId);
-            ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName", document.ModuleId);
+            //ViewData["ModuleId"] = new SelectList(_context.Set<Module>(), "ModuleId", "ModuleName", document.ModuleId);
+            //ViewData["ActivityId"] = new SelectList(_context.Set<Activity>(), "ActivityId", "ActivityName", document.ActivityId);
             return View(document);
         }
 
@@ -396,7 +386,6 @@ namespace CoreLMS.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool DocumentExists(int id)
         {
             return _context.Document.Any(e => e.DocumentId == id);
