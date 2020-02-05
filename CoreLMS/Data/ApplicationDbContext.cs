@@ -30,12 +30,9 @@ namespace CoreLMS.Data
 
         }
 
-        public DbSet<CoreLMS.Core.Models.Module> Module { get; set; }
-
-        public DbSet<CoreLMS.Core.Models.Activity> Activity { get; set; }
-
-        public DbSet<CoreLMS.Core.Models.Document> Document { get; set; }
-
+        public DbSet<Module> Module { get; set; }
+        public DbSet<Activity> Activity { get; set; }
+        public DbSet<Document> Document { get; set; }
         public DbSet<Course> Course { get; set; }
     }
 }
