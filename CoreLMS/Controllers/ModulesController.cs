@@ -21,43 +21,6 @@ namespace CoreLMS.Controllers
             _context = context;
         }
 
-        public IActionResult CheckModuleStartDate(DateTime startdate, int courseid)
-        {
-     
-            var coursestartdate = _context.Course
-                .Where(c => c.CourseId == courseid)
-                .Select(s => s.StartDate)
-                .FirstOrDefault();
-            if (startdate >= coursestartdate)
-            {
-                return Json($"{startdate} is not valid");
-            }
-
-            return Json(true);
-        }
-
-        public IActionResult CheckModuleEndDate(DateTime enddate, DateTime startdate)
-        {
-
-            if (enddate < startdate )
-            {
-                return Json($"{enddate} is not valid");
-            }
-
-            return Json(true);
-        }
-
-        public async Task<IActionResult> Filter(string modulename)
-        {
-
-
-            var filtermodel = string.IsNullOrWhiteSpace(modulename) ?
-                await _context.Module.ToListAsync() :
-                await _context.Module.Where(m => m.ModuleName.Contains(modulename)).ToListAsync();
-            return View(nameof(Index), filtermodel);
-        }
-
-
         // GET: Modules
         public async Task<IActionResult> Index(string sortOrder)
         {
@@ -211,10 +174,56 @@ namespace CoreLMS.Controllers
             return _context.Module.Any(e => e.ModuleId == id);
         }
 
-        //public async Task<IActionResult> GetCourseName()
-        //{
-        //    return (await _context.Course.FirstOrDefaultAsync(c=>c.CourseName).ToString);
-        //}
-     
+        // Filter
+        public async Task<IActionResult> Filter(string modulename)
+        {
+            var filtermodel = string.IsNullOrWhiteSpace(modulename) ?
+                await _context.Module.ToListAsync() :
+                await _context.Module.Where(m => m.ModuleName.Contains(modulename)).ToListAsync();
+            return View(nameof(Index), filtermodel);
+        }
+
+        // Date validations
+        public IActionResult CheckModuleStartDate(DateTime startDate, int courseId)
+        {
+            DateTime courseStartDate = GetCourseStartDate(courseId);
+            DateTime courseEndDate = GetCourseEndDate(courseId);
+
+            if (startDate < courseStartDate | startDate > courseEndDate)
+            {
+                return Json($"The module has to start within the dates of the course ({courseStartDate.ToShortDateString()} to {courseEndDate.ToShortDateString()})");
+            }
+
+            return Json(true);
+        }
+
+        public IActionResult CheckModuleEndDate(DateTime endDate, DateTime startDate, int courseId)
+        {
+            DateTime courseStartDate = GetCourseStartDate(courseId);
+            DateTime courseEndDate = GetCourseEndDate(courseId);
+
+            if (endDate < startDate | endDate > courseEndDate)
+            {
+                return Json($"The module has to end within the dates of the course ({courseStartDate.ToShortDateString()}/{courseEndDate.ToShortDateString()})");
+            }
+
+            return Json(true);
+        }
+
+        private DateTime GetCourseStartDate(int courseId)
+        {
+            return _context.Course
+                .Where(c => c.CourseId == courseId)
+                .Select(s => s.StartDate)
+                .FirstOrDefault();
+        }
+
+        private DateTime GetCourseEndDate(int courseId)
+        {
+            return _context.Course
+                .Where(c => c.CourseId == courseId)
+                .Select(s => s.EndDate)
+                .FirstOrDefault();
+        }
     }
 }

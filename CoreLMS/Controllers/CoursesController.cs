@@ -59,7 +59,6 @@ namespace CoreLMS.Controllers
                     break;
             }
 
-
             return View(await course.ToListAsync());
         }
 
@@ -80,25 +79,6 @@ namespace CoreLMS.Controllers
             }
 
             return View(course);
-        }
-        public async Task<IActionResult> Filter(string coursename)
-        {
-
-
-            var filtermodel = string.IsNullOrWhiteSpace(coursename) ?
-                await _context.Course.ToListAsync() :
-                await _context.Course.Where(m => m.CourseName.Contains(coursename)).ToListAsync();
-            return View(nameof(Index), filtermodel);
-        }
-
-        public IActionResult CheckCourseStartDate(DateTime startdate)
-        {
-            if (startdate <= DateTime.UtcNow)
-            {
-                return Json($"{startdate} is not valid");
-            }
-
-            return Json(true);
         }
 
         // GET: Courses/Create
@@ -228,6 +208,37 @@ namespace CoreLMS.Controllers
             return View(model);
         }
 
+        // Filter
+        public async Task<IActionResult> Filter(string coursename)
+        {
+
+
+            var filtermodel = string.IsNullOrWhiteSpace(coursename) ?
+                await _context.Course.ToListAsync() :
+                await _context.Course.Where(m => m.CourseName.Contains(coursename)).ToListAsync();
+            return View(nameof(Index), filtermodel);
+        }
+
+        // Date validations
+        public IActionResult CheckCourseStartDate(DateTime startDate)
+        {
+            if (startDate.AddDays(1) < DateTime.UtcNow)
+            {
+                return Json($"{startDate} is not valid");
+            }
+
+            return Json(true);
+        }
+
+        public IActionResult CheckCourseEndDate(DateTime startDate, DateTime endDate)
+        {
+            if (endDate <= startDate)
+            {
+                return Json($"{endDate} is not valid");
+            }
+
+            return Json(true);
+        }
 
     }
 }

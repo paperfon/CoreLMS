@@ -10,7 +10,7 @@ namespace CoreLMS.Core.Models
     public class Module
     {
         public int ModuleId { get; set; }
-        
+
         [Required]
         public string ModuleName { get; set; }
 
@@ -19,7 +19,7 @@ namespace CoreLMS.Core.Models
         public DateTime StartDate { get; set; }
 
         [DataType(DataType.Date)]
-        [Remote(action: "CheckModuleEndDate", controller: "Modules" ,AdditionalFields = "StartDate")]
+        [Remote(action: "CheckModuleEndDate", controller: "Modules", AdditionalFields = "StartDate, CourseId")]
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
 

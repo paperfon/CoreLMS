@@ -22,43 +22,6 @@ namespace CoreLMS.Controllers
             _context = context;
         }
 
-
-        public IActionResult CheckActivitesStartDate(DateTime startdate, int moduleid)
-        {
-            
-            var modulestartdate = _context.Module
-                .Where(c => c.ModuleId == moduleid)
-                .Select(s => s.StartDate)
-                .FirstOrDefault();
-            if (startdate > modulestartdate)
-            {
-                return Json($"{startdate} is not valid");
-            }
-
-            return Json(true);
-        }
-
-        public IActionResult CheckActivitesEndDate(DateTime enddate, DateTime startdate)
-        {
-
-            if (enddate < startdate)
-            {
-                return Json($"{enddate} is not valid");
-            }
-
-            return Json(true);
-        }
-
-        public async Task<IActionResult> Filter(string activityname)
-        {
-
-
-            var filtermodel = string.IsNullOrWhiteSpace(activityname) ?
-                await _context.Activity.ToListAsync() :
-                await _context.Activity.Where(m => m.ActivityName.Contains(activityname)).ToListAsync();
-            return View(nameof(Index), filtermodel);
-        }
-
         // GET: Activities
         public async Task<IActionResult> Index(string sortOrder)
         {
@@ -212,10 +175,61 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Activities/Delete/5
-      
         private bool ActivityExists(int id)
         {
             return _context.Activity.Any(e => e.ActivityId == id);
+        }
+
+        // Filter
+        public async Task<IActionResult> Filter(string activityname)
+        {
+            var filtermodel = string.IsNullOrWhiteSpace(activityname) ?
+                await _context.Activity.ToListAsync() :
+                await _context.Activity.Where(m => m.ActivityName.Contains(activityname)).ToListAsync();
+            return View(nameof(Index), filtermodel);
+        }
+
+        // Date validations
+        public IActionResult CheckActivitiesStartDate(DateTime startDate, int moduleId)
+        {
+            DateTime moduleStartDate = GetModuleStartDate(moduleId);
+            DateTime moduleEndDate = GetModuleEndDate(moduleId);
+
+            if (startDate < moduleStartDate | startDate > moduleEndDate)
+            {
+                return Json($"The activity has to start within the date of the module ({moduleStartDate.ToShortDateString()} to {moduleEndDate.ToShortDateString()})");
+            }
+
+            return Json(true);
+        }
+
+        public IActionResult CheckActivitiesEndDate(DateTime endDate, DateTime startDate, int moduleId)
+        {
+            DateTime moduleStartDate = GetModuleStartDate(moduleId);
+            DateTime moduleEndDate = GetModuleEndDate(moduleId);
+
+            if (endDate < startDate | endDate > moduleEndDate)
+            {
+                return Json($"The activity has to end within the date of the module ({moduleStartDate.ToShortDateString()} to {moduleEndDate.ToShortDateString()})");
+            }
+
+            return Json(true);
+        }
+
+        private DateTime GetModuleEndDate(int moduleId)
+        {
+            return _context.Module
+                .Where(c => c.ModuleId == moduleId)
+                .Select(s => s.EndDate)
+                .FirstOrDefault();
+        }
+
+        private DateTime GetModuleStartDate(int moduleId)
+        {
+            return _context.Module
+                .Where(c => c.ModuleId == moduleId)
+                .Select(s => s.StartDate)
+                .FirstOrDefault();
         }
     }
 }
