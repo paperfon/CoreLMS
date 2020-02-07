@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Data\Migrations\20200128092806_Init.cs" />
     <Compile Remove="Data\Migrations\20200128092806_Init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200207081928_Adding-CoursesNavigation.cs" />
+    <Compile Remove="Data\Migrations\20200207081928_Adding-CoursesNavigation.Designer.cs" />
   </ItemGroup>
 
 

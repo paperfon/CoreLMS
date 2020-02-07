@@ -32,7 +32,7 @@ namespace CoreLMS.Controllers
             ViewBag.ActivityTypeSortParm = sortOrder == "ActivityType" ? "ActivityType_desc" : "ActivityType";
             ViewBag.ModuleSortParm = sortOrder == "Module" ? "Module_desc" : "Module";
 
-            IQueryable<Activity> activity = _context.Activity.Include(a => a.Module);
+            IQueryable<Activity> activity = _context.Activities.Include(a => a.Module);
 
             switch (sortOrder)
             {
@@ -86,7 +86,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity
+            var activity = await _context.Activities
                 .Include(a => a.Module)
                 .FirstOrDefaultAsync(m => m.ActivityId == id);
             if (activity == null)
@@ -100,7 +100,7 @@ namespace CoreLMS.Controllers
         // GET: Activities/Create
         public IActionResult Create()
         {
-            ViewData["ModuleId"] = new SelectList(_context.Module, "ModuleId", "ModuleName");
+            ViewData["ModuleId"] = new SelectList(_context.Modules, "ModuleId", "ModuleName");
             return View();
         }
 
@@ -117,7 +117,7 @@ namespace CoreLMS.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ModuleId"] = new SelectList(_context.Module, "ModuleId", "ModuleName", activity.ModuleId);
+            ViewData["ModuleId"] = new SelectList(_context.Modules, "ModuleId", "ModuleName", activity.ModuleId);
             return View(activity);
         }
 
@@ -129,12 +129,12 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var activity = await _context.Activity.FindAsync(id);
+            var activity = await _context.Activities.FindAsync(id);
             if (activity == null)
             {
                 return NotFound();
             }
-            ViewData["ModuleId"] = new SelectList(_context.Module, "ModuleId", "ModuleName", activity.ModuleId);
+            ViewData["ModuleId"] = new SelectList(_context.Modules, "ModuleId", "ModuleName", activity.ModuleId);
             return View(activity);
         }
 
@@ -170,22 +170,22 @@ namespace CoreLMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ModuleId"] = new SelectList(_context.Module, "ModuleId", "ModuleName", activity.ModuleId);
+            ViewData["ModuleId"] = new SelectList(_context.Modules, "ModuleId", "ModuleName", activity.ModuleId);
             return View(activity);
         }
 
         // GET: Activities/Delete/5
         private bool ActivityExists(int id)
         {
-            return _context.Activity.Any(e => e.ActivityId == id);
+            return _context.Activities.Any(e => e.ActivityId == id);
         }
 
         // Filter
         public async Task<IActionResult> Filter(string activityname)
         {
             var filtermodel = string.IsNullOrWhiteSpace(activityname) ?
-                await _context.Activity.ToListAsync() :
-                await _context.Activity.Where(m => m.ActivityName.Contains(activityname)).ToListAsync();
+                await _context.Activities.ToListAsync() :
+                await _context.Activities.Where(m => m.ActivityName.Contains(activityname)).ToListAsync();
             return View(nameof(Index), filtermodel);
         }
 
@@ -218,7 +218,7 @@ namespace CoreLMS.Controllers
 
         private DateTime GetModuleEndDate(int moduleId)
         {
-            return _context.Module
+            return _context.Modules
                 .Where(c => c.ModuleId == moduleId)
                 .Select(s => s.EndDate)
                 .FirstOrDefault();
@@ -226,7 +226,7 @@ namespace CoreLMS.Controllers
 
         private DateTime GetModuleStartDate(int moduleId)
         {
-            return _context.Module
+            return _context.Modules
                 .Where(c => c.ModuleId == moduleId)
                 .Select(s => s.StartDate)
                 .FirstOrDefault();

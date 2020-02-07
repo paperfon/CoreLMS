@@ -139,7 +139,7 @@ namespace CoreLMS.Data
                 var fake = new Faker();
                 var r = new Random();
 
-                if (!context.Course.Any())
+                if (!context.Courses.Any())
                 {
                     var courses = new List<Course>();
                     for (int i = 0; i < 5; i++)
@@ -157,12 +157,12 @@ namespace CoreLMS.Data
                     context.SaveChanges();
                 }
 
-                if (!context.Module.Any())
+                if (!context.Modules.Any())
                 {
                     var modules = new List<Module>();
                     for (int i = 0; i < 20; i++)
                     {
-                        var getCoursesIds = context.Course.Select(v => v.CourseId).ToList();
+                        var getCoursesIds = context.Courses.Select(v => v.CourseId).ToList();
                         var randomCourseId = getCoursesIds.OrderBy(x => r.Next()).Take(1).FirstOrDefault();
 
                         var module = new Module
@@ -179,12 +179,12 @@ namespace CoreLMS.Data
                     context.SaveChanges();
                 }
 
-                if (!context.Activity.Any())
+                if (!context.Activities.Any())
                 {
                     var activities = new List<Activity>();
                     for (int i = 0; i < 40; i++)
                     {
-                        var getModulesIds = context.Module.Select(v => v.ModuleId).ToList();
+                        var getModulesIds = context.Modules.Select(v => v.ModuleId).ToList();
                         var randomModuleId = getModulesIds.OrderBy(x => r.Next()).Take(1).FirstOrDefault();
 
                         var activity = new Activity

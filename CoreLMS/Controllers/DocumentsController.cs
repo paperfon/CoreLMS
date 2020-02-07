@@ -28,8 +28,8 @@ namespace CoreLMS.Controllers
 
 
             var filtermodel = string.IsNullOrWhiteSpace(documentname) ?
-                await _context.Document.ToListAsync() :
-                await _context.Document.Where(m => m.DocumentName.Contains(documentname)).ToListAsync();
+                await _context.Documents.ToListAsync() :
+                await _context.Documents.Where(m => m.DocumentName.Contains(documentname)).ToListAsync();
             return View(nameof(Index), filtermodel);
         }
 
@@ -39,15 +39,15 @@ namespace CoreLMS.Controllers
 
             if (entityname == "Course")
             {
-                return Json(_context.Course.Select(c => new SelectListItem { Value = c.CourseId.ToString(), Text = c.CourseName }).ToList());
+                return Json(_context.Courses.Select(c => new SelectListItem { Value = c.CourseId.ToString(), Text = c.CourseName }).ToList());
             }
             else if (entityname == "Module")
             {
-                return Json(_context.Module.Select(m => new SelectListItem { Value = m.ModuleId.ToString(), Text = m.ModuleName }).ToList());
+                return Json(_context.Modules.Select(m => new SelectListItem { Value = m.ModuleId.ToString(), Text = m.ModuleName }).ToList());
             }
             else if (entityname == "Activity")
             {
-                return Json(_context.Activity.Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList());
+                return Json(_context.Activities.Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList());
             }
             else
             {
@@ -60,7 +60,7 @@ namespace CoreLMS.Controllers
 
         public JsonResult GetModules(int courseid)
         {
-            var modulelist = _context.Module.Where(m => m.CourseId == courseid).Select(m => new SelectListItem { Value = m.ModuleId.ToString(), Text = m.ModuleName }).ToList();
+            var modulelist = _context.Modules.Where(m => m.CourseId == courseid).Select(m => new SelectListItem { Value = m.ModuleId.ToString(), Text = m.ModuleName }).ToList();
 
             if (modulelist.Count == 0)
             {
@@ -74,7 +74,7 @@ namespace CoreLMS.Controllers
         }
         public JsonResult GetActivities(int moduleid)
         {
-            var activitylist = _context.Activity.Where(a => a.ModuleId == moduleid).Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList();
+            var activitylist = _context.Activities.Where(a => a.ModuleId == moduleid).Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList();
 
            if (activitylist.Count==0)
             {
@@ -185,15 +185,15 @@ namespace CoreLMS.Controllers
            if (model.selectedentity == "Module")
             {
                 document.ModuleId = model.selectedentityid;
-                document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
+                document.CourseId = _context.Modules.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
 
             }
             else
            if (model.selectedentity == "Activity")
             {
                 document.ActivityId = model.selectedentityid;
-                document.ModuleId = _context.Activity.FirstOrDefault(a => a.ActivityId == document.ActivityId).ModuleId;
-                document.CourseId = _context.Module.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
+                document.ModuleId = _context.Activities.FirstOrDefault(a => a.ActivityId == document.ActivityId).ModuleId;
+                document.CourseId = _context.Modules.FirstOrDefault(m => m.ModuleId == document.ModuleId).CourseId;
 
             }
 
@@ -219,16 +219,16 @@ namespace CoreLMS.Controllers
         {
             if (entityname == "Course")
             {
-                ViewBag.entitylist = _context.Course.Select(c => c.CourseName).ToList(); ;
+                ViewBag.entitylist = _context.Courses.Select(c => c.CourseName).ToList(); ;
             }
             else if (entityname == "Module")
             {
 
-                ViewBag.entitylist = _context.Module.Select(m => m.ModuleName).ToList();
+                ViewBag.entitylist = _context.Modules.Select(m => m.ModuleName).ToList();
             }
             else if (entityname == "Activity")
             {
-                ViewBag.entitylist = _context.Activity.Select(a => a.ActivityName).ToList();
+                ViewBag.entitylist = _context.Activities.Select(a => a.ActivityName).ToList();
             }
 
             return View();
@@ -268,7 +268,7 @@ namespace CoreLMS.Controllers
             ViewBag.ActivitySortParm = sortOrder == "Activity" ? "Activity_desc" : "Activity";
             ViewBag.DocumentPathSortParm = sortOrder == "DocumentPath" ? "DocumentPath_desc" : "DocumentPath";
 
-            IQueryable<Document> documents = _context.Document.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module) ;
+            IQueryable<Document> documents = _context.Documents.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module) ;
 
             foreach (var item in documents)
             {
@@ -337,7 +337,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Document
+            var document = await _context.Documents
                 .Include(d => d.Activity)
                 .Include(d => d.Course)
                 .Include(d => d.LMSUser)
@@ -360,7 +360,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Document.FindAsync(id);
+            var document = await _context.Documents.FindAsync(id);
             if (document == null)
             {
                 return NotFound();
@@ -424,7 +424,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Document
+            var document = await _context.Documents
                 .Include(d => d.Activity)
                 .Include(d => d.Course)
                 .Include(d => d.LMSUser)
@@ -443,14 +443,14 @@ namespace CoreLMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var document = await _context.Document.FindAsync(id);
-            _context.Document.Remove(document);
+            var document = await _context.Documents.FindAsync(id);
+            _context.Documents.Remove(document);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         private bool DocumentExists(int id)
         {
-            return _context.Document.Any(e => e.DocumentId == id);
+            return _context.Documents.Any(e => e.DocumentId == id);
         }
     }
 }

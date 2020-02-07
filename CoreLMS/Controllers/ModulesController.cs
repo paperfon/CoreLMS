@@ -32,7 +32,7 @@ namespace CoreLMS.Controllers
             ViewBag.CourseSortParm = sortOrder == "Course" ? "Course_desc" : "Course";
 
 
-            IQueryable<Module> module = _context.Module.Include(c => c.Course);
+            IQueryable<Module> module = _context.Modules.Include(c => c.Course);
 
             switch (sortOrder)
             {
@@ -79,7 +79,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var module = await _context.Module
+            var module = await _context.Modules
                 .Include(c => c.Course)
                 .Include(m => m.ModuleActivities)
                 .FirstOrDefaultAsync(m => m.ModuleId == id);
@@ -123,7 +123,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var module = await _context.Module.FindAsync(id);
+            var module = await _context.Modules.FindAsync(id);
             if (module == null)
             {
                 return NotFound();
@@ -171,15 +171,15 @@ namespace CoreLMS.Controllers
         // GET: Modules/Delete/5
         private bool ModuleExists(int id)
         {
-            return _context.Module.Any(e => e.ModuleId == id);
+            return _context.Modules.Any(e => e.ModuleId == id);
         }
 
         // Filter
         public async Task<IActionResult> Filter(string modulename)
         {
             var filtermodel = string.IsNullOrWhiteSpace(modulename) ?
-                await _context.Module.ToListAsync() :
-                await _context.Module.Where(m => m.ModuleName.Contains(modulename)).ToListAsync();
+                await _context.Modules.ToListAsync() :
+                await _context.Modules.Where(m => m.ModuleName.Contains(modulename)).ToListAsync();
             return View(nameof(Index), filtermodel);
         }
 
@@ -212,7 +212,7 @@ namespace CoreLMS.Controllers
 
         private DateTime GetCourseStartDate(int courseId)
         {
-            return _context.Course
+            return _context.Courses
                 .Where(c => c.CourseId == courseId)
                 .Select(s => s.StartDate)
                 .FirstOrDefault();
@@ -220,7 +220,7 @@ namespace CoreLMS.Controllers
 
         private DateTime GetCourseEndDate(int courseId)
         {
-            return _context.Course
+            return _context.Courses
                 .Where(c => c.CourseId == courseId)
                 .Select(s => s.EndDate)
                 .FirstOrDefault();

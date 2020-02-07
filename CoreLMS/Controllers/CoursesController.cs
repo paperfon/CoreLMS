@@ -29,7 +29,7 @@ namespace CoreLMS.Controllers
             ViewBag.EndDateSortParm = sortOrder == "EndDate" ? "EndDate_desc" : "EndDate";
             ViewBag.DescriptionSortParm = sortOrder == "Description" ? "Description_desc" : "Description";
 
-            IQueryable<Course> course =  _context.Course;
+            IQueryable<Course> course =  _context.Courses;
 
             switch (sortOrder)
             {
@@ -70,7 +70,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course
+            var course = await _context.Courses
                 .Include(c=>c.CourseModules)
                 .FirstOrDefaultAsync(m => m.CourseId == id);
             if (course == null)
@@ -111,7 +111,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course.FindAsync(id);
+            var course = await _context.Courses.FindAsync(id);
             if (course == null)
             {
                 return NotFound();
@@ -162,7 +162,7 @@ namespace CoreLMS.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course
+            var course = await _context.Courses
                 .FirstOrDefaultAsync(m => m.CourseId == id);
             if (course == null)
             {
@@ -177,20 +177,20 @@ namespace CoreLMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await _context.Course.FindAsync(id);
-            _context.Course.Remove(course);
+            var course = await _context.Courses.FindAsync(id);
+            _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CourseExists(int id)
         {
-            return _context.Course.Any(e => e.CourseId == id);
+            return _context.Courses.Any(e => e.CourseId == id);
         }
 
         public async Task<IActionResult> CoursesModules(int id)
         {
-            var model = await _context.Module
+            var model = await _context.Modules
                  .Include(c => c.Course)
                 .Where(m => m.CourseId == id)
                 .ToListAsync();
@@ -200,7 +200,7 @@ namespace CoreLMS.Controllers
 
         public async Task<IActionResult> ModulesActivities(int id)
         {
-            var model = await _context.Activity
+            var model = await _context.Activities
                 .Include(m=> m.Module)
                 .Where(a => a.ModuleId == id)
                 .ToListAsync();
@@ -214,8 +214,8 @@ namespace CoreLMS.Controllers
 
 
             var filtermodel = string.IsNullOrWhiteSpace(coursename) ?
-                await _context.Course.ToListAsync() :
-                await _context.Course.Where(m => m.CourseName.Contains(coursename)).ToListAsync();
+                await _context.Courses.ToListAsync() :
+                await _context.Courses.Where(m => m.CourseName.Contains(coursename)).ToListAsync();
             return View(nameof(Index), filtermodel);
         }
 

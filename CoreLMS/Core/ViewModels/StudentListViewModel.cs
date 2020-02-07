@@ -1,4 +1,5 @@
 ﻿using CoreLMS.Core.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace CoreLMS.Core.ViewModels
         public string LastName { get; set; }
         public string Email { get; set; }
         public ICollection<Course> Courses { get; set; }
+        public ICollection<IdentityRole> Role { get; set; }
 
     }
 }

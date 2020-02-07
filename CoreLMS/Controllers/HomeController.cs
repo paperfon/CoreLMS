@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CoreLMS.Core.Models;
+using CoreLMS.Core.ViewModels;
 
 namespace CoreLMS.Controllers
 {

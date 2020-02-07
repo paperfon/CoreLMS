@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using CoreLMS.Core.Models;
+using CoreLMS.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,17 +25,20 @@ namespace CoreLMS.Areas.Identity.Pages.Account
         private readonly UserManager<LMSUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<LMSUser> userManager,
             SignInManager<LMSUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         [BindProperty]
@@ -47,7 +51,10 @@ namespace CoreLMS.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            public Roles Role { get; set; }
+            public string Role { get; set; }
+
+            //[Required]
+            //public ICollection<Course> Courses { get; set; }
 
             [Required]
             [EmailAddress]
@@ -69,6 +76,7 @@ namespace CoreLMS.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            var courses = _context.Courses;
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -86,7 +94,7 @@ namespace CoreLMS.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userRole = await _userManager.AddToRoleAsync(user, Input.Role.ToString());
+                    var userRole = await _userManager.AddToRoleAsync(user, Input.Role);
                     if (!userRole.Succeeded)
                     {
                         throw new Exception(string.Join("\n", userRole.Errors));
