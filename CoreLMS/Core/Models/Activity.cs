@@ -15,11 +15,11 @@ namespace CoreLMS.Core.Models
         public string ActivityName { get; set; }
 
         [DataType(DataType.Date)]
-        [Remote(action: "CheckActivitesStartDate", controller: "Activities", AdditionalFields ="ModuleId")]
+        [Remote(action: "CheckActivitiesStartDate", controller: "Activities", AdditionalFields ="ModuleId")]
         public DateTime StartDate { get; set; }
 
         [DataType(DataType.Date)]
-        [Remote(action: "CheckActivitesEndDate", controller: "Activities", AdditionalFields = "StartDate")]
+        [Remote(action: "CheckActivitiesEndDate", controller: "Activities", AdditionalFields = "StartDate, ModuleId")]
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
         public ActivityType ActivityType { get; set; }

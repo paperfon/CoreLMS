@@ -10,7 +10,7 @@ namespace CoreLMS.Core.Models
     public class Course
     {
         public int CourseId { get; set; }
-        
+
         [Required]
         public string CourseName { get; set; }
 
@@ -19,6 +19,7 @@ namespace CoreLMS.Core.Models
         public DateTime StartDate { get; set; }
 
         [DataType(DataType.Date)]
+        [Remote(action: "CheckCourseEndDate", controller: "Courses", AdditionalFields = "StartDate")]
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
 
