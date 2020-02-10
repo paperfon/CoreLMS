@@ -71,7 +71,7 @@ namespace CoreLMS.Controllers
             }
 
             var course = await _context.Courses
-                .Include(c=>c.CourseModules)
+                .Include(c=>c.CourseModules)                
                 .FirstOrDefaultAsync(m => m.CourseId == id);
             if (course == null)
             {

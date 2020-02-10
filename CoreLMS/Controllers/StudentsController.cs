@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CoreLMS.Core.Models;
 using CoreLMS.Core.ViewModels;
 using CoreLMS.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -78,7 +79,64 @@ namespace CoreLMS.Controllers
                             ActivityType = s.ActivityType.ToString()
                         };
 
+
+            
+
             return View(model);
+        }
+
+
+        /******************************************************************************************************/
+       [Authorize(Roles = "Student")]
+        public async Task<IActionResult> DetailsForStudent(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var course = await _context.Courses
+                .Include(m =>m.CourseModules )
+                .ThenInclude(a => a.ModuleActivities )               
+                .FirstOrDefaultAsync(c => c.CourseId == id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            course.CourseModules= course.CourseModules
+                .OrderBy(m => m.StartDate.Date)
+                .ThenBy(m => m.EndDate)
+                .ToList();
+
+            foreach (Module m in course.CourseModules)
+            {
+                m.ModuleActivities = m.ModuleActivities
+                    .OrderBy(a => a.StartDate.Date)
+                    .ThenBy(a => a.EndDate).ToList();
+            }
+
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            int? currentModuleId = null;
+            foreach (var mod in course.CourseModules)
+            {
+                foreach (Activity act in mod.ModuleActivities)
+                {
+                   
+                        currentModuleId = act.ModuleId;
+                        break;
+                    
+                }
+                if (currentModuleId != null) break;
+            }
+
+            var currentActivityId = _context.Activities.Where(a => a.ModuleId == currentModuleId);
+
+
+            var cfs = new CourseForStudent() { activeModuleId = currentModuleId, course = course };
+
+            return View(cfs);
         }
     }
 }
