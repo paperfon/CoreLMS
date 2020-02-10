@@ -88,8 +88,14 @@ namespace CoreLMS.Controllers
 
         /******************************************************************************************************/
        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> DetailsForStudent(int? id)
+        public async Task<IActionResult> DetailsForStudent()
         {
+            var stu_id = userManager.GetUserId(User);
+            var course_id = await _context.LMSUserCourses
+                .Where(s => s.LMSUserId == stu_id)
+                .Select(c => c.CourseId)
+                .FirstOrDefaultAsync();
+
             if (id == null)
             {
                 return NotFound();
@@ -98,7 +104,7 @@ namespace CoreLMS.Controllers
             var course = await _context.Courses
                 .Include(m =>m.CourseModules )
                 .ThenInclude(a => a.ModuleActivities )               
-                .FirstOrDefaultAsync(c => c.CourseId == id);
+                .FirstOrDefaultAsync(c => c.CourseId == course_id);
             if (course == null)
             {
                 return NotFound();
