@@ -53,8 +53,8 @@ namespace CoreLMS.Areas.Identity.Pages.Account
             [Required]
             public string Role { get; set; }
 
-            //[Required]
-            //public ICollection<Course> Courses { get; set; }
+            [Required]
+            public Course Course { get; set; }
 
             [Required]
             [EmailAddress]
@@ -76,7 +76,7 @@ namespace CoreLMS.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            var courses = _context.Courses;
+            //ViewData[Courses] = _context.Courses.ToList();
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }

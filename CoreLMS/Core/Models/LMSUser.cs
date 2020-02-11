@@ -11,8 +11,7 @@ namespace CoreLMS.Core.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName => $"{FirstName} {LastName}";
-        public ICollection<LMSUserCourse> RegisteredCourses { get; set; }
         public ICollection<Document> LMSUserDocuments { get; set; }
-        public virtual ICollection<IdentityRole> Roles { get; } = new List<IdentityRole>();
+        public ICollection<LMSUserCourse> RegisteredCourses { get; set; }
     }
 }

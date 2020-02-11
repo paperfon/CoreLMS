@@ -61,13 +61,19 @@ namespace CoreLMS.Data
                     if (adminUserRole.Count > 0) continue;
                     else
                     {
-                        foreach (var role in roleNames)
+                        //foreach (var role in roleNames)
+                        //{
+                        //    var addToRoleResult = await userManager.AddToRoleAsync(adminUser, role);
+                        //    if (!addToRoleResult.Succeeded)
+                        //    {
+                        //        throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                        //    }
+                        //}
+                        var addToRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
+                        var addToRoleResultTeacher = await userManager.AddToRoleAsync(adminUser, "Teacher");
+                        if (!addToRoleResult.Succeeded | !addToRoleResultTeacher.Succeeded)
                         {
-                            var addToRoleResult = await userManager.AddToRoleAsync(adminUser, role);
-                            if (!addToRoleResult.Succeeded)
-                            {
-                                throw new Exception(string.Join("\n", addToRoleResult.Errors));
-                            }
+                            throw new Exception(string.Join("\n", addToRoleResult.Errors));
                         }
                     }
 
@@ -101,38 +107,6 @@ namespace CoreLMS.Data
                         }
                     }
 
-                }
-
-                // Creating students
-                var studentEmails = new List<string> { };
-
-                for (int i = 1; i < 21; i++)
-                {
-                    var email = "student" + i + "@lms.se";
-                    studentEmails.Add(email);
-                }
-
-                foreach (var email in studentEmails)
-                {
-                    var foundUser = await userManager.FindByEmailAsync(email);
-                    if (foundUser != null) continue;
-                    else { await NewUser(adminPW, userManager, email); }
-                }
-
-                // Assigning roles for the students users
-                foreach (var email in studentEmails)
-                {
-                    var studentUser = await userManager.FindByEmailAsync(email);
-                    var studentUserRole = await userManager.GetRolesAsync(studentUser);
-                    if (studentUserRole.Count > 0) continue;
-                    else
-                    {
-                        var addToRoleResult = await userManager.AddToRoleAsync(studentUser, "Student");
-                        if (!addToRoleResult.Succeeded)
-                        {
-                            throw new Exception(string.Join("\n", addToRoleResult.Errors));
-                        }
-                    }
                 }
 
                 // Faking courses, modules and activities
@@ -201,6 +175,53 @@ namespace CoreLMS.Data
                     context.AddRange(activities);
                     context.SaveChanges();
                 }
+
+                // Creating students
+                var studentEmails = new List<string> { };
+
+                for (int i = 1; i < 21; i++)
+                {
+                    var email = "student" + i + "@lms.se";
+                    studentEmails.Add(email);
+                }
+
+                foreach (var email in studentEmails)
+                {
+                    var foundUser = await userManager.FindByEmailAsync(email);
+                    if (foundUser != null) continue;
+                    else { await NewUser(adminPW, userManager, email); }
+                }
+
+                // Assigning roles and courses for the students
+                foreach (var email in studentEmails)
+                {
+                    var studentUser = await userManager.FindByEmailAsync(email);
+                    var studentUserRole = await userManager.GetRolesAsync(studentUser);
+                    if (studentUserRole.Count > 0) continue;
+                    else
+                    {
+                        var addToRoleResult = await userManager.AddToRoleAsync(studentUser, "Student");
+                        if (!addToRoleResult.Succeeded)
+                        {
+                            throw new Exception(string.Join("\n", addToRoleResult.Errors));
+                        }
+                        // Assigning student to a course
+                        var studentUserId = await userManager.GetUserIdAsync(studentUser);
+                        var getCoursesIds = context.Courses.Select(v => v.CourseId).ToList();
+                        var randomCourseId = getCoursesIds.OrderBy(x => r.Next()).Take(1).FirstOrDefault();
+
+                        var studentCourse = new LMSUserCourse
+                        {
+                            CourseId = randomCourseId,
+                            LMSUserId = studentUserId
+                        };
+
+                        context.Add(studentCourse);
+                        context.SaveChanges();
+                    }
+
+                }
+
 
             }
         }

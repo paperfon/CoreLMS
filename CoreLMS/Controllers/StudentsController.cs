@@ -27,18 +27,22 @@ namespace CoreLMS.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-
-            var userId = userManager.GetUserId(User);
-            var user = await userManager.FindByIdAsync(userId);
-            var userRole = await userManager.GetRolesAsync(user);
+            // Get a list of users with a particular role
+            var roleId = _context.Roles.FirstOrDefault(r => r.Name == "Student").Id;
+            var userRoleList = _context.UserRoles.Where(x => x.RoleId == roleId).Select(c=>c.UserId).ToList();
 
             var model = await userManager.Users
+                .Include(r => r.RegisteredCourses)
+                .ThenInclude(c => c.Course)
+                .Where(u => userRoleList.Any(c=> c == u.Id))
                 .Select(s => new StudentListViewModel
                 {
                     FirstName = s.FirstName,
                     LastName = s.LastName,
-                    Email = s.Email
-                }).ToListAsync();
+                    Email = s.Email,
+                    Courses = s.RegisteredCourses.Select(r => r.Course).ToList()
+                })
+                .ToListAsync();
 
             return View(model);
         }
@@ -80,14 +84,14 @@ namespace CoreLMS.Controllers
                         };
 
 
-            
+
 
             return View(model);
         }
 
 
         /******************************************************************************************************/
-       [Authorize(Roles = "Student")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> DetailsForStudent()
         {
             var stu_id = userManager.GetUserId(User);
@@ -96,21 +100,21 @@ namespace CoreLMS.Controllers
                 .Select(c => c.CourseId)
                 .FirstOrDefaultAsync();
 
-            if (id == null)
-            {
-                return NotFound();
-            }
+            //if (id == null)
+            //{
+            //    return NotFound();
+            //}
 
             var course = await _context.Courses
-                .Include(m =>m.CourseModules )
-                .ThenInclude(a => a.ModuleActivities )               
+                .Include(m => m.CourseModules)
+                .ThenInclude(a => a.ModuleActivities)
                 .FirstOrDefaultAsync(c => c.CourseId == course_id);
             if (course == null)
             {
                 return NotFound();
             }
 
-            course.CourseModules= course.CourseModules
+            course.CourseModules = course.CourseModules
                 .OrderBy(m => m.StartDate.Date)
                 .ThenBy(m => m.EndDate)
                 .ToList();
@@ -129,10 +133,10 @@ namespace CoreLMS.Controllers
             {
                 foreach (Activity act in mod.ModuleActivities)
                 {
-                   
-                        currentModuleId = act.ModuleId;
-                        break;
-                    
+
+                    currentModuleId = act.ModuleId;
+                    break;
+
                 }
                 if (currentModuleId != null) break;
             }
