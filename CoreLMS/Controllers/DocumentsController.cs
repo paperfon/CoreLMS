@@ -259,6 +259,14 @@ namespace CoreLMS.Controllers
 
         public ActionResult Index(string sortOrder)
         {
+            IQueryable<Document> documents = _context.Documents.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module);
+
+            documents = SortDocuments(sortOrder, documents);
+            return View(documents.ToList());
+        }
+
+        private IQueryable<Document> SortDocuments(string sortOrder, IQueryable<Document> documents)
+        {
             ViewBag.DocumentNameSortParm = String.IsNullOrEmpty(sortOrder) ? "DocumentName_desc" : "";
             ViewBag.UploadTimeSortParm = sortOrder == "UploadTime" ? "UploadTime_desc" : "UploadTime";
             ViewBag.TypeOfDocumentSortParm = sortOrder == "TypeOfDocument" ? "TypeOfDocument_desc" : "TypeOfDocument";
@@ -268,7 +276,7 @@ namespace CoreLMS.Controllers
             ViewBag.ActivitySortParm = sortOrder == "Activity" ? "Activity_desc" : "Activity";
             ViewBag.DocumentPathSortParm = sortOrder == "DocumentPath" ? "DocumentPath_desc" : "DocumentPath";
 
-            IQueryable<Document> documents = _context.Documents.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module) ;
+
 
             foreach (var item in documents)
             {
@@ -278,7 +286,7 @@ namespace CoreLMS.Controllers
             switch (sortOrder)
             {
                 case "DocumentName_desc":
-                    documents = documents.OrderByDescending(d=>d.DocumentName);
+                    documents = documents.OrderByDescending(d => d.DocumentName);
                     break;
                 case "UploadTime_desc":
                     documents = documents.OrderByDescending(d => d.UploadTime);
@@ -326,7 +334,8 @@ namespace CoreLMS.Controllers
                     documents = documents.OrderBy(d => d.DocumentName);
                     break;
             }
-            return View(documents.ToList());
+
+            return documents;
         }
 
         // GET: Documents/Details/5

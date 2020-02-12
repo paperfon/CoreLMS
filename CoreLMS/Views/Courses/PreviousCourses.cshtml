@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CoreLMS.Core.Models.Course>
+
+@{
+    ViewData["Title"] = "PreviousCourses";
+}
+
+<h3>Previous Courses</h3>
+<p>
+    <a asp-action="Index">back to Courses Index</a>  
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CourseName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    <a asp-controller="Modules"   asp-action="PreviousModules" asp-route-id="@item.CourseId">Previous Modules</a>
+                </td>
+            </tr>
+        }
+
+
+        
+    
+    </tbody>
+</table>
+
