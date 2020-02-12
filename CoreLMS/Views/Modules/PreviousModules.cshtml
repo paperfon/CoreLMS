@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<CoreLMS.Core.Models.Module>
 
 @{
-    ViewData["Title"] = "CoursesModules";
+    ViewData["Title"] = "Previous Modules";
 }
 
-<h1>CoursesModules:</h1>
+<h3>Previous Modules</h3>
 
 @if (Model.Count() == 0)
 {
@@ -14,13 +14,11 @@
 }
 else
 {
-<h2>
-    @Model.First().Course.CourseName
-</h2>
+    <p>CourseName : @ViewBag.CourseName</p>
 }
 
 <p>
-    <a asp-controller="Modules" asp-action="Create">Create New Module</a>
+    <a asp-action="Index">back to Modules Index</a>
 </p>
 <table class="table">
     <thead>
@@ -63,10 +61,8 @@ else
                     @Html.DisplayFor(modelItem => item.Course.CourseName)
                 </td>
                 <td>
-                    <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.ModuleId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ModuleId">Details</a> |
-                    <a asp-action="ModulesActivities" asp-route-id="@item.ModuleId">Activities</a> |
-                    <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.ModuleId" asp-route-name="Module">Upload Documents</a>
+                    <a asp-controller="Activities" asp-action="PreviousActivities" asp-route-id="@item.ModuleId">Previous Activities</a>
+
                 </td>
             </tr>
         }

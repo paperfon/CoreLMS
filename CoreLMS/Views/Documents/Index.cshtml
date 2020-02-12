@@ -62,7 +62,7 @@
             </td>
             <td>
                 <div>
-                    <a href=@ViewBag.file>@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                    <a asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
                 </div>
             </td>
             <td>
@@ -81,6 +81,7 @@
                 @Html.DisplayFor(modelItem => item.Activity.ActivityName)
             </td>
             <td>
+                @*<a asp-action="Download" asp-route-id="@item.DocumentId">Download</a> |*@
                 <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.DocumentId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>

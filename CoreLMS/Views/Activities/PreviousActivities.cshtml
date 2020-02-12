@@ -1,32 +1,31 @@
-﻿@model IEnumerable<CoreLMS.Core.Models.Module>
+﻿@model IEnumerable<CoreLMS.Core.Models.Activity>
 
 @{
-    ViewData["Title"] = "CoursesModules";
+    ViewData["Title"] = "PreviousActivities";
 }
 
-<h1>CoursesModules:</h1>
-
+<h3>Previous Activities</h3>
 @if (Model.Count() == 0)
 {
 
-    <p class="text-warning"><strong>No Modules to this course..</strong></p>
+    <p class="text-warning"><strong>No Activities to this Module..</strong></p>
 
 }
 else
 {
-<h2>
-    @Model.First().Course.CourseName
-</h2>
+<p>
+    Module Name : @ViewBag.ModuleName;
+</p>
 }
 
 <p>
-    <a asp-controller="Modules" asp-action="Create">Create New Module</a>
+    <a asp-action="Index">Back to Activities Index</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ModuleName)
+                @Html.DisplayNameFor(model => model.ActivityName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StartDate)
@@ -38,7 +37,10 @@ else
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Course)
+                @Html.DisplayNameFor(model => model.ActivityType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Module)
             </th>
             <th></th>
         </tr>
@@ -48,7 +50,7 @@ else
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ModuleName)
+                    @Html.DisplayFor(modelItem => item.ActivityName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.StartDate)
@@ -60,13 +62,10 @@ else
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Course.CourseName)
+                    @Html.DisplayFor(modelItem => item.ActivityType)
                 </td>
                 <td>
-                    <a asp-controller="Modules" asp-action="Edit" asp-route-id="@item.ModuleId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ModuleId">Details</a> |
-                    <a asp-action="ModulesActivities" asp-route-id="@item.ModuleId">Activities</a> |
-                    <a asp-controller="Documents" asp-action="Create" asp-route-id="@item.ModuleId" asp-route-name="Module">Upload Documents</a>
+                    @Html.DisplayFor(modelItem => item.Module.ModuleName)
                 </td>
             </tr>
         }
