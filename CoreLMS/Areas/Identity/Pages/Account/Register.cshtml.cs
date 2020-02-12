@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -48,13 +49,16 @@ namespace CoreLMS.Areas.Identity.Pages.Account
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
+        public IEnumerable<SelectListItem> CoursesList { get; set; }
+
         public class InputModel
         {
             [Required]
             public string Role { get; set; }
 
             [Required]
-            public Course Course { get; set; }
+            [Display(Name = "Course")]
+            public int CourseId { get; set; }
 
             [Required]
             [EmailAddress]
@@ -76,7 +80,11 @@ namespace CoreLMS.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            //ViewData[Courses] = _context.Courses.ToList();
+            CoursesList = _context.Courses.Select(i => new SelectListItem()
+            {
+                Text = i.CourseName,
+                Value = i.CourseId.ToString()
+            });
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -94,11 +102,21 @@ namespace CoreLMS.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    // Add user to role
                     var userRole = await _userManager.AddToRoleAsync(user, Input.Role);
                     if (!userRole.Succeeded)
                     {
                         throw new Exception(string.Join("\n", userRole.Errors));
                     }
+
+                    // Add user to course
+                    var userCourse = new LMSUserCourse
+                    {
+                        CourseId = Input.CourseId,
+                        LMSUserId = user.Id
+                    };
+                    _context.Add(userCourse);
+                    _context.SaveChanges();
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
