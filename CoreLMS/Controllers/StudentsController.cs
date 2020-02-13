@@ -55,17 +55,6 @@ namespace CoreLMS.Controllers
 
             ViewBag.StudentName= userManager.GetUserName(User);
 
-
-            //IEnumerable<ModulesActivitiesViewModel> moduleactivities = _context.Activities.Include(m => m.Module).ThenInclude(c => c.Course)
-            //                                                .Where(a => a.Module.Course.CourseId == course_id)
-            //                                                .Select(ma => new ModulesActivitiesViewModel
-            //                                                {
-            //                                                    ModuleforCourse = ma.Module,
-            //                                                    Activitiesformodule = ma.Module.ModuleActivities
-            //                                                });
-
-
-
             IEnumerable<StudenPageViewModel> model =_context.LMSUserCourses
                 .Include(c => c.Course)
                 .ThenInclude(m=>m.CourseModules)
@@ -74,47 +63,15 @@ namespace CoreLMS.Controllers
                 {
                     CourseName = c.Course.CourseName,
                     CourseDescription =c.Course.Description,
-                    
+                    CourseId=c.Course.CourseId,
+                    ModulesforActivities = c.Course.CourseModules.Select(ma=> new ModulesActivitiesViewModel
+                    {
+                        ModuleNameforCourse = ma.ModuleName,
+                        ModuleID = ma.ModuleId,
+                        Activitiesformodule = ma.ModuleActivities
+                    }).ToList()
 
                 }).ToList();
-
-
-
-
-
-
-            //var model =_context.Activities.Include(a=>a.Module)
-
-            //var moduleid = _context.Modules
-            //    .Where(m => m.CourseId == course_id)
-            //    .Select(m => m.ModuleId)
-            //    .FirstOrDefault();
-
-            //var stu_activities = _context.Activities.Where(a => a.ModuleId == moduleid).ToList();
-
-            //var model = from c in _context.Courses
-            //            .Where(c => c.CourseId == course_id)
-            //            join m in _context.Modules
-            //            on c.CourseId equals m.CourseId
-            //            join a in _context.Activities
-            //            on m.ModuleId equals a.ModuleId into sp
-            //            from s in sp.DefaultIfEmpty()
-            //            select new StudenPageViewModel
-            //            {
-            //                CourseName = c.CourseName,
-            //                CourseStartDate = c.StartDate,
-            //                CourseEndDate = c.EndDate,
-            //                ModuleName = m.ModuleName,
-            //                ModuleStartDate = m.StartDate,
-            //                ModuleEndDate = m.EndDate,
-            //                ActivityName = s.ActivityName,
-            //                ActivityStartDate = s.StartDate,
-            //                ActivityEndDate = s.EndDate,
-            //                ActivityType = s.ActivityType.ToString()
-            //            };
-
-
-
 
             return View(model); 
         }

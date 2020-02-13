@@ -8,7 +8,10 @@ namespace CoreLMS.Core.ViewModels
 {
     public class ModulesActivitiesViewModel
     {
-        public Module ModuleforCourse { get; set; }
+        public string  ModuleNameforCourse { get; set; }
+
+        public int ModuleID { get; set; }
+
         public ICollection<Activity> Activitiesformodule { get; set; }
     }
 }

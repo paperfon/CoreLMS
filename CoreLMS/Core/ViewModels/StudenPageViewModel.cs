@@ -10,6 +10,8 @@ namespace CoreLMS.Core.ViewModels
         public string CourseName { get; set; }
 
         public string CourseDescription { get; set; }
+
+        public int CourseId { get; set; }
         //public DateTime CourseStartDate { get; set; }
         //public DateTime CourseEndDate { get; set; }
 
