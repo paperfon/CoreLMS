@@ -22,6 +22,9 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.StartDate)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.EndDate)
         </dd>
@@ -43,6 +46,15 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.CourseId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if ((User.IsInRole("Teacher")) || (User.IsInRole("Admin")))
+    {
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.CourseId">Edit</a> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    }
+    else
+    {
+        <a asp-controller="Students" asp-action="StudentPage">Student HomePage</a>
+    }
 </div>

@@ -1,13 +1,18 @@
 ﻿@model IEnumerable<CoreLMS.Core.ViewModels.StudenPageViewModel>
 
+
 @{
-    ViewData["Title"] = "StudentPage";
+    ViewData["Title"] = "Index";
 }
 
 <h3>Student Page</h3>
 
 <p>
     Welcome @ViewBag.StudentName!
+    <hr />
+    <a asp-controller="Documents" asp-action="Index">View Documents</a>|
+    @*<a asp-controller="Documents" asp-action="UploadAssignmentDocument">Upload Assignment Documents</a>|*@
+
 </p>
 <div class="container-fluid">
     <div class="row">
@@ -28,14 +33,22 @@
                     {
                         <p><strong>Activity Name:</strong>  @activity.ActivityName</p>
                         <a asp-controller="Activities" asp-action="Details" asp-route-id="@activity.ActivityId"> Activity Details</a>
-                    }
+                        if(@activity.ActivityType ==  ActivityType.Assignment)
+                        { 
+                            <p>Assignment DeadLine: @activity.EndDate </p>}
+                         }
                     <hr />
                 }
             }
         </div>
         <div class="col-sm-3 bg-light">
+
             <p>List Of Course Participants</p>
+
         </div>
+
+
+
     </div>
 </div>
 

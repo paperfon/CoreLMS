@@ -47,7 +47,30 @@ namespace CoreLMS.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> StudentPage()
+
+
+        public async Task<IActionResult> CourseStudents()
+        {
+
+            var stu_id = userManager.GetUserId(User);
+            var courseid = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
+
+            IEnumerable<CourseStudents> Model =await _context.LMSUserCourses
+                .Where(lc => lc.CourseId == courseid)
+                .Include(ls => ls.LMSUser)
+                .Select(s => new CourseStudents
+                {
+                    StudentId = s.LMSUser.Id,
+                    FullName = s.LMSUser.FullName,
+                    Email = s.LMSUser.Email
+                }).ToListAsync();
+
+
+            return PartialView("_StudentsList", Model);
+        }
+
+
+            public async  Task<IActionResult> StudentPage()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
@@ -55,23 +78,23 @@ namespace CoreLMS.Controllers
 
             ViewBag.StudentName= userManager.GetUserName(User);
 
-            IEnumerable<StudenPageViewModel> model =_context.LMSUserCourses
+            IEnumerable<StudenPageViewModel> model = await _context.LMSUserCourses
                 .Include(c => c.Course)
-                .ThenInclude(m=>m.CourseModules)
+                .ThenInclude(m => m.CourseModules)
                 .Where(s => s.LMSUserId == stu_id)
                 .Select(c => new StudenPageViewModel
                 {
                     CourseName = c.Course.CourseName,
-                    CourseDescription =c.Course.Description,
-                    CourseId=c.Course.CourseId,
-                    ModulesforActivities = c.Course.CourseModules.Select(ma=> new ModulesActivitiesViewModel
+                    CourseDescription = c.Course.Description,
+                    CourseId = c.Course.CourseId,
+                    ModulesforActivities = c.Course.CourseModules.Select(ma => new ModulesActivitiesViewModel
                     {
                         ModuleNameforCourse = ma.ModuleName,
                         ModuleID = ma.ModuleId,
                         Activitiesformodule = ma.ModuleActivities
                     }).ToList()
 
-                }).ToList();
+                }).ToListAsync();
 
             return View(model); 
         }

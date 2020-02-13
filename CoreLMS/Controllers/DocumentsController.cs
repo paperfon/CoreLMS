@@ -95,10 +95,7 @@ namespace CoreLMS.Controllers
             List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
             ViewBag.lmsentity = new SelectList(Lmslentities);
 
-
-
-            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
-            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
+            GetTypeOfDoc();
 
             return View();
         }
@@ -126,7 +123,47 @@ namespace CoreLMS.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ViewResult UploadAssignmentDocument()
+        {
+            GetTypeOfDoc();
+
+            ViewBag.AssignmentsList = _context.Activities.Where(a => a.ActivityType == ActivityType.Assignment)
+                .Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList(); 
         
+            
+            return View();
+        }
+
+        private void GetTypeOfDoc()
+        {
+            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
+            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
+}
+
+        [HttpPost]
+        public async Task<IActionResult> UploadAssignmentDocumentAsync(UploadFile model, int id)
+        {
+            model.selectedentity = "Activity";
+            model.selectedentityid = id;
+            if (ModelState.IsValid)
+            {
+                Document document = Fileupload(model);
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(document);
+                    await _context.SaveChangesAsync();
+                    TempData["AlertMessage"] = "Uploaded Successfully !!";
+                    return RedirectToAction(nameof(Index));
+                }
+
+
+            }
+
+            return View();
+        }
+
         public async Task<IActionResult> Download(int? id)
         {
             if (id == null)
