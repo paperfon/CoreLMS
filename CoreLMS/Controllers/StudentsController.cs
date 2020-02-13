@@ -50,43 +50,73 @@ namespace CoreLMS.Controllers
         public async Task<IActionResult> StudentPage()
         {
             var stu_id = userManager.GetUserId(User);
-            var course_id = await _context.LMSUserCourses
+            var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
+
+
+            ViewBag.StudentName= userManager.GetUserName(User);
+
+
+            //IEnumerable<ModulesActivitiesViewModel> moduleactivities = _context.Activities.Include(m => m.Module).ThenInclude(c => c.Course)
+            //                                                .Where(a => a.Module.Course.CourseId == course_id)
+            //                                                .Select(ma => new ModulesActivitiesViewModel
+            //                                                {
+            //                                                    ModuleforCourse = ma.Module,
+            //                                                    Activitiesformodule = ma.Module.ModuleActivities
+            //                                                });
+
+
+
+            IEnumerable<StudenPageViewModel> model =_context.LMSUserCourses
+                .Include(c => c.Course)
+                .ThenInclude(m=>m.CourseModules)
                 .Where(s => s.LMSUserId == stu_id)
-                .Select(c => c.CourseId)
-                .FirstOrDefaultAsync();
+                .Select(c => new StudenPageViewModel
+                {
+                    CourseName = c.Course.CourseName,
+                    CourseDescription =c.Course.Description,
+                    
 
-            var moduleid = _context.Modules
-                .Where(m => m.CourseId == course_id)
-                .Select(m => m.ModuleId)
-                .FirstOrDefault();
-
-            var stu_activities = _context.Activities.Where(a => a.ModuleId == moduleid).ToList();
-
-            var model = from c in _context.Courses
-                        .Where(c => c.CourseId == course_id)
-                        join m in _context.Modules
-                        on c.CourseId equals m.CourseId
-                        join a in _context.Activities
-                        on m.ModuleId equals a.ModuleId into sp
-                        from s in sp.DefaultIfEmpty()
-                        select new StudenPageViewModel
-                        {
-                            CourseName = c.CourseName,
-                            CourseStartDate = c.StartDate,
-                            CourseEndDate = c.EndDate,
-                            ModuleName = m.ModuleName,
-                            ModuleStartDate = m.StartDate,
-                            ModuleEndDate = m.EndDate,
-                            ActivityName = s.ActivityName,
-                            ActivityStartDate = s.StartDate,
-                            ActivityEndDate = s.EndDate,
-                            ActivityType = s.ActivityType.ToString()
-                        };
+                }).ToList();
 
 
 
 
-            return View(model);
+
+
+            //var model =_context.Activities.Include(a=>a.Module)
+
+            //var moduleid = _context.Modules
+            //    .Where(m => m.CourseId == course_id)
+            //    .Select(m => m.ModuleId)
+            //    .FirstOrDefault();
+
+            //var stu_activities = _context.Activities.Where(a => a.ModuleId == moduleid).ToList();
+
+            //var model = from c in _context.Courses
+            //            .Where(c => c.CourseId == course_id)
+            //            join m in _context.Modules
+            //            on c.CourseId equals m.CourseId
+            //            join a in _context.Activities
+            //            on m.ModuleId equals a.ModuleId into sp
+            //            from s in sp.DefaultIfEmpty()
+            //            select new StudenPageViewModel
+            //            {
+            //                CourseName = c.CourseName,
+            //                CourseStartDate = c.StartDate,
+            //                CourseEndDate = c.EndDate,
+            //                ModuleName = m.ModuleName,
+            //                ModuleStartDate = m.StartDate,
+            //                ModuleEndDate = m.EndDate,
+            //                ActivityName = s.ActivityName,
+            //                ActivityStartDate = s.StartDate,
+            //                ActivityEndDate = s.EndDate,
+            //                ActivityType = s.ActivityType.ToString()
+            //            };
+
+
+
+
+            return View(model); 
         }
 
 
