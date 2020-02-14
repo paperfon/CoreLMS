@@ -16,7 +16,7 @@
                 <a class="navbar-brand" asp-area="" asp-controller="" asp-action="Index">CoreLMS</a>
                 @if (User.IsInRole("Student") )
                 { 
-                     <a class="navbar-brand" asp-area="" asp-controller="Students" asp-action="Participant">Course participants</a>
+                     <a class="navbar-brand" asp-area="" asp-controller="Students" asp-action="CourseParticipent">Course participants</a>
                      <a class="navbar-brand" asp-area="" asp-controller="Students" asp-action="Index">Student Detail</a>
                 }
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"

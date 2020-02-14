@@ -172,5 +172,33 @@ namespace CoreLMS.Controllers
 
             return View(cfs);
         }
+
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> CourseParticipent()
+        {
+            var stu_id = userManager.GetUserId(User);
+            var course_id = await _context.LMSUserCourses
+                .Where(s => s.LMSUserId == stu_id)
+                .Select(c => c.CourseId)
+                .FirstOrDefaultAsync();
+
+ 
+            var model = await _context.LMSUserCourses
+                .Where(c => c.CourseId == course_id)
+                .Select(s => new ParticipantsListViewModel
+                {
+                    FirstName = s.LMSUser.FirstName,
+                    LastName = s.LMSUser.LastName,
+                    Email = s.LMSUser.Email,
+                    CourseName = s.Course.CourseName
+
+                }).ToListAsync();
+
+
+            return View(model);
+        }
+
+
+        }
     }
-}
