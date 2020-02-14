@@ -46,44 +46,7 @@
         </li>
 
 
-        <li class="list-group-item">
-            <br>
 
-
-
-            @*@if (Model.course.CourseDocuments.Count > 0)
-            {
-                string completeFilePath = "";
-                <h3>Files for the course</h3>
-
-                <table class="table">
-                    <thead>
-                        <tr class="p-3 mb-2 bg-light text-dark">
-                            <th>File link</th>
-                            <th>Document name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.course.CourseDocuments)
-                        {
-                            completeFilePath = "/Documents/" + item.FileName;
-                            <tr>
-                                <td>
-                                    <a href=@completeFilePath>@item.FileName</a>
-                                </td>
-                                <td>
-                                    @item.InternalName
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }*@
-
-
-
-
-        </li>
         <li class="list-group-item">
             <br>
 
@@ -164,6 +127,52 @@
                     </tbody>
                 </table>
             }
+
+        </li>
+        <li class="list-group-item">
+            <br>
+
+
+
+            @if (Model.course.CourseDocuments!=null)
+            {
+                
+                <h3>Files for the course</h3>
+
+                <table class="table">
+                    <thead>
+                        <tr class="p-3 mb-2 bg-light text-dark">
+                            <th>File link</th>
+                            <th>Document name</th>
+                            <th>Entity</th>
+                            <th>Entity Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.course.CourseDocuments)
+                        {
+                            
+                        <tr>
+                            <td>
+                                <a asp-controller="Documents" asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                            </td>
+                            <td>
+                                @item.DocumentName
+                            </td>
+                            <td>
+                                <p>Entity </p>
+                            </td>
+                            <td>
+                                <p>Entity Name</p>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+
+
 
         </li>
     </ul>

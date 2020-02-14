@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreLMS.Core.Models;
@@ -129,7 +130,7 @@ namespace CoreLMS.Controllers
             //    return NotFound();
             //}
 
-            var course = await _context.Courses
+            var course = await _context.Courses.Include(d=>d.CourseDocuments)
                 .Include(m => m.CourseModules)
                 .ThenInclude(a => a.ModuleActivities)
                 .FirstOrDefaultAsync(c => c.CourseId == course_id);
@@ -169,6 +170,12 @@ namespace CoreLMS.Controllers
 
 
             var cfs = new CourseForStudent() { activeModuleId = currentModuleId, course = course };
+
+            foreach (var coursedocuments in cfs.course.CourseDocuments)
+            {
+                coursedocuments.DocumentPath = Path.GetFileName(coursedocuments.DocumentPath);
+            }
+            
 
             return View(cfs);
         }
