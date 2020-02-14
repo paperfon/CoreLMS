@@ -39,6 +39,7 @@ namespace CoreLMS.Controllers
                 .Where(u => userRoleList.Any(c=> c == u.Id))
                 .Select(s => new StudentListViewModel
                 {
+                    Id = s.Id,
                     FirstName = s.FirstName,
                     LastName = s.LastName,
                     Email = s.Email,
@@ -49,11 +50,31 @@ namespace CoreLMS.Controllers
             return View(model);
         }
 
+        // GET: Students/Details/5
+        public async Task<IActionResult> Details (string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var model = await userManager.Users
+                .Include(r=>r.RegisteredCourses)
+                .ThenInclude(c=>c.Course)
+                .Where(s=>s.Id == id)
+                .Select(s => new StudentListViewModel
+                {
+                    Id = s.Id,
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
+                    Email = s.Email,
+                    Courses = s.RegisteredCourses.Select(r => r.Course).ToList()
+                }).FirstOrDefaultAsync();
 
-     
+            return View(model);
+        }
 
-            public async  Task<IActionResult> StudentPage()
+        public async Task<IActionResult> StudentPage()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
