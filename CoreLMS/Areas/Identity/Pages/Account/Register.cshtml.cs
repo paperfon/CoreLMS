@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreLMS.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin, Teacher")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<LMSUser> _signInManager;
