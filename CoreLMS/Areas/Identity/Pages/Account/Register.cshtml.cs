@@ -13,12 +13,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace CoreLMS.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin, Teacher")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<LMSUser> _signInManager;
@@ -26,19 +28,22 @@ namespace CoreLMS.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _config;
 
         public RegisterModel(
             UserManager<LMSUser> userManager,
             SignInManager<LMSUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _context = context;
+            _config = config;
         }
 
         [BindProperty]
@@ -48,35 +53,42 @@ namespace CoreLMS.Areas.Identity.Pages.Account
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
+        public IEnumerable<SelectListItem> CoursesList { get; set; }
+
         public class InputModel
         {
             [Required]
             public string Role { get; set; }
 
-            //[Required]
-            //public ICollection<Course> Courses { get; set; }
+            [Required]
+            [Display(Name = "Course")]
+            public int CourseId { get; set; }
 
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Password")]
-            public string Password { get; set; }
+            //[Required]
+            //[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            //[DataType(DataType.Password)]
+            //[Display(Name = "Password")]
+            //public string Password { get; set; }
 
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+            //[DataType(DataType.Password)]
+            //[Display(Name = "Confirm password")]
+            //[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            //public string ConfirmPassword { get; set; }
 
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            var courses = _context.Courses;
+            CoursesList = _context.Courses.Select(i => new SelectListItem()
+            {
+                Text = i.CourseName,
+                Value = i.CourseId.ToString()
+            });
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -88,17 +100,32 @@ namespace CoreLMS.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new LMSUser { UserName = Input.Email, Email = Input.Email };
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                //var result = await _userManager.CreateAsync(user, Input.Password);
+
+                // Use the adminPW as the default password when creating new users
+                // TODO: Having a default password is a temp solution and should be fixed
+                var defaultPassword = _config["KEY"];
+                var result = await _userManager.CreateAsync(user, defaultPassword);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    // Add user to role
                     var userRole = await _userManager.AddToRoleAsync(user, Input.Role);
                     if (!userRole.Succeeded)
                     {
                         throw new Exception(string.Join("\n", userRole.Errors));
                     }
+
+                    // Add user to course
+                    var userCourse = new LMSUserCourse
+                    {
+                        CourseId = Input.CourseId,
+                        LMSUserId = user.Id
+                    };
+                    _context.Add(userCourse);
+                    _context.SaveChanges();
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

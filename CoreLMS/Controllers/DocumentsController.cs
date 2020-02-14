@@ -95,10 +95,7 @@ namespace CoreLMS.Controllers
             List<Entity> Lmslentities = Enum.GetValues(typeof(Entity)).Cast<Entity>().ToList();
             ViewBag.lmsentity = new SelectList(Lmslentities);
 
-
-
-            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
-            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
+            GetTypeOfDoc();
 
             return View();
         }
@@ -125,6 +122,92 @@ namespace CoreLMS.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public ViewResult UploadAssignmentDocument()
+        {
+            GetTypeOfDoc();
+
+            ViewBag.AssignmentsList = _context.Activities.Where(a => a.ActivityType == ActivityType.Assignment)
+                .Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList(); 
+        
+            
+            return View();
+        }
+
+        private void GetTypeOfDoc()
+        {
+            List<TypeOfDoc> typeofdoc = Enum.GetValues(typeof(TypeOfDoc)).Cast<TypeOfDoc>().ToList();
+            ViewBag.typeOfDoclist = new SelectList(typeofdoc);
+}
+
+        [HttpPost]
+        public async Task<IActionResult> UploadAssignmentDocumentAsync(UploadFile model, int id)
+        {
+            model.selectedentity = "Activity";
+            model.selectedentityid = id;
+            if (ModelState.IsValid)
+            {
+                Document document = Fileupload(model);
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(document);
+                    await _context.SaveChangesAsync();
+                    TempData["AlertMessage"] = "Uploaded Successfully !!";
+                    return RedirectToAction(nameof(Index));
+                }
+
+
+            }
+
+            return View();
+        }
+
+        public async Task<IActionResult> Download(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var filepath = _context.Documents.Where(d => d.DocumentId == id).Select(d => d.DocumentPath).FirstOrDefault();
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(filepath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, GetContentType(filepath), Path.GetFileName(filepath));
+        }
+
+        private string GetContentType(string path)
+        {
+            var types = GetMimeTypes();
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return types[ext];
+        }
+
+        private Dictionary<string, string> GetMimeTypes()
+        {
+            return new Dictionary<string, string>
+            {
+                {".txt", "text/plain"},
+                {".pdf", "application/pdf"},
+                {".doc", "application/vnd.ms-word"},
+                {".docx", "application/vnd.ms-word"},
+                {".xls", "application/vnd.ms-excel"},
+                {".xlsx", "application/vnd.openxmlformats,officedocument.spreadsheetml.sheet"},
+                {".png", "image/png"},
+                {".jpg", "image/jpeg"},
+                {".jpeg", "image/jpeg"},
+                {".gif", "image/gif"},
+                {".csv", "text/csv"}
+            };
+        }
+
+
 
         [Route("Create/{id}/{name}")]
         [HttpPost]
@@ -160,7 +243,13 @@ namespace CoreLMS.Controllers
                 var uploadsFolder = Path.Combine(projectDir, "wwwroot/Dox");
                 FileName = Path.GetFileName(model.File.FileName);
                 filePath = Path.Combine(uploadsFolder, FileName);
-                model.File.CopyTo(new FileStream(filePath, FileMode.Create));
+                //model.File.CopyTo(new FileStream(filePath, FileMode.Create));
+                using (FileStream f = new FileStream(filePath, FileMode.Create))
+                {
+                    model.File.CopyTo(f);
+                    f.Close();
+                }
+
 
             }
 
@@ -259,6 +348,14 @@ namespace CoreLMS.Controllers
 
         public ActionResult Index(string sortOrder)
         {
+            IQueryable<Document> documents = _context.Documents.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module);
+
+            documents = SortDocuments(sortOrder, documents);
+            return View(documents.ToList());
+        }
+
+        private IQueryable<Document> SortDocuments(string sortOrder, IQueryable<Document> documents)
+        {
             ViewBag.DocumentNameSortParm = String.IsNullOrEmpty(sortOrder) ? "DocumentName_desc" : "";
             ViewBag.UploadTimeSortParm = sortOrder == "UploadTime" ? "UploadTime_desc" : "UploadTime";
             ViewBag.TypeOfDocumentSortParm = sortOrder == "TypeOfDocument" ? "TypeOfDocument_desc" : "TypeOfDocument";
@@ -268,7 +365,7 @@ namespace CoreLMS.Controllers
             ViewBag.ActivitySortParm = sortOrder == "Activity" ? "Activity_desc" : "Activity";
             ViewBag.DocumentPathSortParm = sortOrder == "DocumentPath" ? "DocumentPath_desc" : "DocumentPath";
 
-            IQueryable<Document> documents = _context.Documents.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module) ;
+
 
             foreach (var item in documents)
             {
@@ -278,7 +375,7 @@ namespace CoreLMS.Controllers
             switch (sortOrder)
             {
                 case "DocumentName_desc":
-                    documents = documents.OrderByDescending(d=>d.DocumentName);
+                    documents = documents.OrderByDescending(d => d.DocumentName);
                     break;
                 case "UploadTime_desc":
                     documents = documents.OrderByDescending(d => d.UploadTime);
@@ -326,7 +423,8 @@ namespace CoreLMS.Controllers
                     documents = documents.OrderBy(d => d.DocumentName);
                     break;
             }
-            return View(documents.ToList());
+
+            return documents;
         }
 
         // GET: Documents/Details/5

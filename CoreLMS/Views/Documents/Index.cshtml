@@ -1,5 +1,4 @@
-﻿@model  IEnumerable<CoreLMS.Core.Models.Document>
-                                 
+﻿@model IEnumerable<CoreLMS.Core.Models.Document>
 @*@model IEnumerable<CoreLMS.Core.ViewModels.DocumentList>*@
 
 @{
@@ -8,9 +7,18 @@
 
 <h1>Documents</h1>
 
-<p>
-    <a asp-action="UploadDocument">Upload New Document</a>
-</p>
+@if ((User.IsInRole("Teacher")) || (User.IsInRole("Admin")))
+{
+    <p>
+        <a asp-action="UploadDocument">Upload New Document</a>
+    </p>
+}
+else
+{
+    <p>
+        <a  asp-controller="Students" asp-action="StudentPage">Home Page</a>
+    </p>
+}
 <form asp-action="Filter">
     <div class="input-group mb-3">
         <input type="text" name="documentname" class="form-control" placeholder="Search on title" />
@@ -24,7 +32,7 @@
     <thead>
         <tr>
             <th>
-                @Html.ActionLink("DocumentName", "Index", new { sortOrder = ViewBag.DocumentNameSortParm})
+                @Html.ActionLink("DocumentName", "Index", new { sortOrder = ViewBag.DocumentNameSortParm })
             </th>
             <th>
                 @Html.ActionLink("UploadTime", "Index", new { sortOrder = ViewBag.UploadTimeSortParm })
@@ -51,41 +59,49 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
 
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DocumentName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UploadTime)
-            </td>
-            <td>
-                <div>
-                    <a href=@ViewBag.file>@Html.DisplayFor(modelItem => item.DocumentPath)</a>
-                </div>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TypeOfDocument)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LMSUser.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.CourseName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Module.ModuleName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activity.ActivityName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DocumentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>
-            </td>
-        </tr>
-}
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DocumentName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UploadTime)
+                </td>
+                <td>
+                    <div>
+                        <a asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                    </div>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TypeOfDocument)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LMSUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Course.CourseName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Module.ModuleName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Activity.ActivityName)
+                </td>
+                <td>
+                    @*<a asp-action="Download" asp-route-id="@item.DocumentId">Download</a> |*@
+                    <a asp-action="Details" asp-route-id="@item.DocumentId">Details</a>
+
+                    @if ((User.IsInRole("Teacher")) || (User.IsInRole("Admin")))
+                    {
+                        <div>
+                            | <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
+                            <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

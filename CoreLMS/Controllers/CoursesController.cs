@@ -21,15 +21,32 @@ namespace CoreLMS.Controllers
             _context = context;
         }
 
+
+        public async Task<IActionResult> PreviousCourses(string sortOrder)
+        {
+            IQueryable<Course> course = _context.Courses.Where(c => c.EndDate < DateTime.Now);
+
+            course = SortCourses(sortOrder, course);
+
+            return View(await course.ToListAsync());
+        }
+
         // GET: Courses
         public async Task<IActionResult> Index(string sortOrder)
+        {
+            IQueryable<Course> course = _context.Courses.Where(c => c.EndDate > DateTime.Now); ;
+
+            course = SortCourses(sortOrder, course);
+
+            return View(await course.ToListAsync());
+        }
+
+        private IQueryable<Course> SortCourses(string sortOrder, IQueryable<Course> course)
         {
             ViewBag.CourseNameSortParm = String.IsNullOrEmpty(sortOrder) ? "CourseName_desc" : "";
             ViewBag.StartDateSortParm = sortOrder == "StartDate" ? "StartDate_desc" : "StartDate";
             ViewBag.EndDateSortParm = sortOrder == "EndDate" ? "EndDate_desc" : "EndDate";
             ViewBag.DescriptionSortParm = sortOrder == "Description" ? "Description_desc" : "Description";
-
-            IQueryable<Course> course =  _context.Courses;
 
             switch (sortOrder)
             {
@@ -59,7 +76,7 @@ namespace CoreLMS.Controllers
                     break;
             }
 
-            return View(await course.ToListAsync());
+            return course;
         }
 
         // GET: Courses/Details/5

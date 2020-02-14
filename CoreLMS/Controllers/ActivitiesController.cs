@@ -25,6 +25,25 @@ namespace CoreLMS.Controllers
         // GET: Activities
         public async Task<IActionResult> Index(string sortOrder)
         {
+            IQueryable<Activity> activity = _context.Activities.Include(a => a.Module).Where(c => c.EndDate > DateTime.Now); ;
+            activity = SortActivities(sortOrder, activity);
+
+            return View(await activity.ToListAsync());
+        }
+
+
+        public async Task<IActionResult> PreviousActivities(int id, string sortOrder)
+        {
+            IQueryable<Activity> model = _context.Activities.Include(m => m.Module).Where(a => a.ModuleId == id && a.EndDate < DateTime.Now);
+            @ViewBag.ModuleName = _context.Modules.Where(m => m.ModuleId == id).Select(m => m.ModuleName).FirstOrDefault();
+
+            model = SortActivities(sortOrder, model);
+
+            return View(await model.ToListAsync());
+        }
+
+        private IQueryable<Activity> SortActivities(string sortOrder, IQueryable<Activity> activity)
+        {
             ViewBag.ActivityNameSortParm = String.IsNullOrEmpty(sortOrder) ? "ActivityName_desc" : "";
             ViewBag.StartDateSortParm = sortOrder == "StartDate" ? "StartDate_desc" : "StartDate";
             ViewBag.EndDateSortParm = sortOrder == "EndDate" ? "EndDate_desc" : "EndDate";
@@ -32,7 +51,7 @@ namespace CoreLMS.Controllers
             ViewBag.ActivityTypeSortParm = sortOrder == "ActivityType" ? "ActivityType_desc" : "ActivityType";
             ViewBag.ModuleSortParm = sortOrder == "Module" ? "Module_desc" : "Module";
 
-            IQueryable<Activity> activity = _context.Activities.Include(a => a.Module);
+
 
             switch (sortOrder)
             {
@@ -74,8 +93,7 @@ namespace CoreLMS.Controllers
                     break;
             }
 
-
-            return View(await activity.ToListAsync());
+            return activity;
         }
 
         // GET: Activities/Details/5

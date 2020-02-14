@@ -1,127 +1,61 @@
 ﻿@model IEnumerable<CoreLMS.Core.ViewModels.StudenPageViewModel>
 
+
 @{
-    ViewData["Title"] = "StudentPage";
+    ViewData["Title"] = "Index";
 }
 
-<h1>StudentPage</h1>
+<h3>Student Page</h3>
 
 <p>
+    Welcome @ViewBag.StudentName!
+    <hr />
+    <a asp-controller="Documents" asp-action="Index">View Documents</a>|
+    @*<a asp-controller="Documents" asp-action="UploadAssignmentDocument">Upload Assignment Documents</a>|*@
 
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseStartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseEndDate)
-            </th>
-    </thead>
-
-    <tbody>
-
-        @*TODO: Try it without foreach *@
-        @foreach (var item in Model)
-        {
-            <tr>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.CourseName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CourseStartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CourseEndDate)
-                </td>
-            </tr>
-            break;
-        }
-    </tbody>
-
-
-    @*-----------------------------------------------MODULES--------------------------------------------*@
-
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ModuleName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModuleStartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModuleEndDate)
-            </th>
-        </tr>
-    </thead>
-    @*Model.Select(m=>m.ModuleName).Distinct();*@
-    <tbody>
-
-          
-        @foreach (var item in Model.Select(m=> new {newmodel=m.ModuleName+m.ModuleStartDate+m.ModuleEndDate }).Distinct().ToList())
-        {
-
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem =>item.newmodel)
-                </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item )
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item )
-                </td>*@
-            </tr>
-        @*<thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ActivityName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ActivityStartDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ActivityEndDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ActivityType)
-                </th>
-
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr>
-                @foreach (var item1 in Model)
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-9">
+            @foreach (var course in Model)
+            {
+                <p><strong>Course Name:</strong>  @course.CourseName</p>
+                <p><strong> Course Description:</strong>  @course.CourseDescription</p>
+                <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseId">Course Details</a>
+                <hr />
+                foreach (var module in course.ModulesforActivities)
                 {
+                    <p><strong>Module Name:</strong>  @module.ModuleNameforCourse</p>
+                    <a asp-controller="Modules" asp-action="Details" asp-route-id="@module.ModuleID">Module Details</a>
 
-                    <td>
-                        @Html.DisplayFor(modelItem => item1.ActivityName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item1.ActivityStartDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item1.ActivityEndDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item1.ActivityType)
-                    </td>
+
+                    foreach (var activity in module.Activitiesformodule)
+                    {
+                        <p><strong>Activity Name:</strong>  @activity.ActivityName</p>
+                        <a asp-controller="Activities" asp-action="Details" asp-route-id="@activity.ActivityId"> Activity Details</a>
+                        if(@activity.ActivityType ==  ActivityType.Assignment)
+                        { 
+                            <p>Assignment DeadLine: @activity.EndDate </p>}
+                         }
+                    <hr />
                 }
-            </tr>
+            }
+        </div>
+        <div class="col-sm-3 bg-light">
 
-        </tbody>*@
+            <p>List Of Course Participants</p>
+            @foreach (var item in @ViewBag.Coursestudents)
+            {
+                <p>@item.Email</p>
 
-}
-        </tbody>
-    </table>
+            }
 
+        </div>
+
+
+
+    </div>
+</div>
 
 
 

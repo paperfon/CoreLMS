@@ -36,6 +36,7 @@ namespace CoreLMS.Core.Models
         ELearning,
         Session,
         Homework,
+        Assignment,
         Other
     }
 }

@@ -27,67 +27,72 @@ namespace CoreLMS.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-
-            var userId = userManager.GetUserId(User);
-            var user = await userManager.FindByIdAsync(userId);
-            var userRole = await userManager.GetRolesAsync(user);
+            // Get a list of users with a particular role
+            var roleId = _context.Roles.FirstOrDefault(r => r.Name == "Student").Id;
+            var userRoleList = _context.UserRoles.Where(x => x.RoleId == roleId).Select(c=>c.UserId).ToList();
 
             var model = await userManager.Users
+                .Include(r => r.RegisteredCourses)
+                .ThenInclude(c => c.Course)
+                .Where(u => userRoleList.Any(c=> c == u.Id))
                 .Select(s => new StudentListViewModel
                 {
                     FirstName = s.FirstName,
                     LastName = s.LastName,
-                    Email = s.Email
-                }).ToListAsync();
+                    Email = s.Email,
+                    Courses = s.RegisteredCourses.Select(r => r.Course).ToList()
+                })
+                .ToListAsync();
 
             return View(model);
         }
 
-        public async Task<IActionResult> StudentPage()
+
+
+     
+
+            public async  Task<IActionResult> StudentPage()
         {
             var stu_id = userManager.GetUserId(User);
-            var course_id = await _context.LMSUserCourses
+            var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
+
+
+            ViewBag.StudentName= userManager.GetUserName(User);
+
+            ViewBag.Coursestudents = await _context.LMSUserCourses
+                .Where(lc => lc.CourseId == course_id)
+                .Include(ls => ls.LMSUser)
+                .Select(s => new CourseStudents
+                {
+                    StudentId = s.LMSUser.Id,
+                    FullName = s.LMSUser.FullName,
+                    Email = s.LMSUser.Email
+                }).ToListAsync();
+
+            IEnumerable<StudenPageViewModel> model = await _context.LMSUserCourses
+                .Include(c => c.Course)
+                .ThenInclude(m => m.CourseModules)
                 .Where(s => s.LMSUserId == stu_id)
-                .Select(c => c.CourseId)
-                .FirstOrDefaultAsync();
+                .Select(c => new StudenPageViewModel
+                {
+                    CourseName = c.Course.CourseName,
+                    CourseDescription = c.Course.Description,
+                    CourseId = c.Course.CourseId,
+                    ModulesforActivities = c.Course.CourseModules.Select(ma => new ModulesActivitiesViewModel
+                    {
+                        ModuleNameforCourse = ma.ModuleName,
+                        ModuleID = ma.ModuleId,
+                        Activitiesformodule = ma.ModuleActivities
+                    }).ToList()
 
-            var moduleid = _context.Modules
-                .Where(m => m.CourseId == course_id)
-                .Select(m => m.ModuleId)
-                .FirstOrDefault();
+                }).ToListAsync();
 
-            var stu_activities = _context.Activities.Where(a => a.ModuleId == moduleid).ToList();
-
-            var model = from c in _context.Courses
-                        .Where(c => c.CourseId == course_id)
-                        join m in _context.Modules
-                        on c.CourseId equals m.CourseId
-                        join a in _context.Activities
-                        on m.ModuleId equals a.ModuleId into sp
-                        from s in sp.DefaultIfEmpty()
-                        select new StudenPageViewModel
-                        {
-                            CourseName = c.CourseName,
-                            CourseStartDate = c.StartDate,
-                            CourseEndDate = c.EndDate,
-                            ModuleName = m.ModuleName,
-                            ModuleStartDate = m.StartDate,
-                            ModuleEndDate = m.EndDate,
-                            ActivityName = s.ActivityName,
-                            ActivityStartDate = s.StartDate,
-                            ActivityEndDate = s.EndDate,
-                            ActivityType = s.ActivityType.ToString()
-                        };
-
-
-            
-
-            return View(model);
+            return View(model); 
         }
 
 
         /******************************************************************************************************/
-       [Authorize(Roles = "Student")]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> DetailsForStudent()
         {
             var stu_id = userManager.GetUserId(User);
@@ -96,21 +101,21 @@ namespace CoreLMS.Controllers
                 .Select(c => c.CourseId)
                 .FirstOrDefaultAsync();
 
-            if (course_id == null)
-            {
-                return NotFound();
-            }
+            //if (id == null)
+            //{
+            //    return NotFound();
+            //}
 
             var course = await _context.Courses
-                .Include(m =>m.CourseModules )
-                .ThenInclude(a => a.ModuleActivities )               
+                .Include(m => m.CourseModules)
+                .ThenInclude(a => a.ModuleActivities)
                 .FirstOrDefaultAsync(c => c.CourseId == course_id);
             if (course == null)
             {
                 return NotFound();
             }
 
-            course.CourseModules= course.CourseModules
+            course.CourseModules = course.CourseModules
                 .OrderBy(m => m.StartDate.Date)
                 .ThenBy(m => m.EndDate)
                 .ToList();
@@ -129,10 +134,10 @@ namespace CoreLMS.Controllers
             {
                 foreach (Activity act in mod.ModuleActivities)
                 {
-                   
-                        currentModuleId = act.ModuleId;
-                        break;
-                    
+
+                    currentModuleId = act.ModuleId;
+                    break;
+
                 }
                 if (currentModuleId != null) break;
             }

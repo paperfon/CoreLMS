@@ -24,15 +24,31 @@ namespace CoreLMS.Controllers
         // GET: Modules
         public async Task<IActionResult> Index(string sortOrder)
         {
+            IQueryable<Module> module = _context.Modules.Include(c => c.Course).Where(c=>c.EndDate > DateTime.Now);
 
+            module = SortModules(sortOrder, module);
+
+            return View(await module.ToListAsync());
+        }
+
+        public async Task<IActionResult> PreviousModules(int id, string sortOrder)
+        {
+            IQueryable<Module> model = _context.Modules.Include(c => c.Course).Where(m => m.CourseId == id && m.EndDate < DateTime.Now);
+            ViewBag.CourseName = _context.Courses.Where(c => c.CourseId == id).Select(c => c.CourseName).FirstOrDefault();
+
+            model = SortModules(sortOrder, model);
+            
+            return View(await model.ToListAsync());
+        }
+
+
+        private IQueryable<Module> SortModules(string sortOrder, IQueryable<Module> module)
+        {
             ViewBag.ModuleNameSortParm = String.IsNullOrEmpty(sortOrder) ? "ModuleName_desc" : "";
             ViewBag.StartDateSortParm = sortOrder == "StartDate" ? "StartDate_desc" : "StartDate";
             ViewBag.EndDateSortParm = sortOrder == "EndDate" ? "EndDate_desc" : "EndDate";
             ViewBag.DescriptionSortParm = sortOrder == "Description" ? "Description_desc" : "Description";
             ViewBag.CourseSortParm = sortOrder == "Course" ? "Course_desc" : "Course";
-
-
-            IQueryable<Module> module = _context.Modules.Include(c => c.Course);
 
             switch (sortOrder)
             {
@@ -68,7 +84,7 @@ namespace CoreLMS.Controllers
                     break;
             }
 
-            return View(await module.ToListAsync());
+            return module;
         }
 
         // GET: Modules/Details/5
