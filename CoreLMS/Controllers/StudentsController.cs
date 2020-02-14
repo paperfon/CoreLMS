@@ -49,26 +49,7 @@ namespace CoreLMS.Controllers
 
 
 
-        public async Task<IActionResult> CourseStudents()
-        {
-
-            var stu_id = userManager.GetUserId(User);
-            var courseid = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
-
-            IEnumerable<CourseStudents> Model =await _context.LMSUserCourses
-                .Where(lc => lc.CourseId == courseid)
-                .Include(ls => ls.LMSUser)
-                .Select(s => new CourseStudents
-                {
-                    StudentId = s.LMSUser.Id,
-                    FullName = s.LMSUser.FullName,
-                    Email = s.LMSUser.Email
-                }).ToListAsync();
-
-
-            return PartialView("_StudentsList", Model);
-        }
-
+     
 
             public async  Task<IActionResult> StudentPage()
         {
@@ -77,6 +58,16 @@ namespace CoreLMS.Controllers
 
 
             ViewBag.StudentName= userManager.GetUserName(User);
+
+            ViewBag.Coursestudents = await _context.LMSUserCourses
+                .Where(lc => lc.CourseId == course_id)
+                .Include(ls => ls.LMSUser)
+                .Select(s => new CourseStudents
+                {
+                    StudentId = s.LMSUser.Id,
+                    FullName = s.LMSUser.FullName,
+                    Email = s.LMSUser.Email
+                }).ToListAsync();
 
             IEnumerable<StudenPageViewModel> model = await _context.LMSUserCourses
                 .Include(c => c.Course)

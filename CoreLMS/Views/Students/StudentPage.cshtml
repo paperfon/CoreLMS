@@ -44,6 +44,11 @@
         <div class="col-sm-3 bg-light">
 
             <p>List Of Course Participants</p>
+            @foreach (var item in @ViewBag.Coursestudents)
+            {
+                <p>@item.Email</p>
+
+            }
 
         </div>
 
