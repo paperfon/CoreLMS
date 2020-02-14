@@ -25,7 +25,9 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index()
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> Participant()
         {
             // Get a list of users with a particular role
             var roleId = _context.Roles.FirstOrDefault(r => r.Name == "Student").Id;
@@ -93,7 +95,7 @@ namespace CoreLMS.Controllers
 
         /******************************************************************************************************/
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> DetailsForStudent()
+        public async Task<IActionResult> Index()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = await _context.LMSUserCourses
