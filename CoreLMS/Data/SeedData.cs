@@ -167,7 +167,7 @@ namespace CoreLMS.Data
                             StartDate = fake.Date.Future(),
                             EndDate = fake.Date.Future(),
                             Description = fake.Lorem.Sentences(),
-                            ActivityType = (ActivityType)fake.Random.Int(0, 3),
+                            ActivityType = (ActivityType)fake.Random.Int(0, 4),
                             ModuleId = randomModuleId
                         };
                         activities.Add(activity);

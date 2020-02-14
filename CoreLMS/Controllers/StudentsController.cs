@@ -47,7 +47,11 @@ namespace CoreLMS.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> StudentPage()
+
+
+     
+
+            public async  Task<IActionResult> StudentPage()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
@@ -55,66 +59,33 @@ namespace CoreLMS.Controllers
 
             ViewBag.StudentName= userManager.GetUserName(User);
 
+            ViewBag.Coursestudents = await _context.LMSUserCourses
+                .Where(lc => lc.CourseId == course_id)
+                .Include(ls => ls.LMSUser)
+                .Select(s => new CourseStudents
+                {
+                    StudentId = s.LMSUser.Id,
+                    FullName = s.LMSUser.FullName,
+                    Email = s.LMSUser.Email
+                }).ToListAsync();
 
-            //IEnumerable<ModulesActivitiesViewModel> moduleactivities = _context.Activities.Include(m => m.Module).ThenInclude(c => c.Course)
-            //                                                .Where(a => a.Module.Course.CourseId == course_id)
-            //                                                .Select(ma => new ModulesActivitiesViewModel
-            //                                                {
-            //                                                    ModuleforCourse = ma.Module,
-            //                                                    Activitiesformodule = ma.Module.ModuleActivities
-            //                                                });
-
-
-
-            IEnumerable<StudenPageViewModel> model =_context.LMSUserCourses
+            IEnumerable<StudenPageViewModel> model = await _context.LMSUserCourses
                 .Include(c => c.Course)
-                .ThenInclude(m=>m.CourseModules)
+                .ThenInclude(m => m.CourseModules)
                 .Where(s => s.LMSUserId == stu_id)
                 .Select(c => new StudenPageViewModel
                 {
                     CourseName = c.Course.CourseName,
-                    CourseDescription =c.Course.Description,
-                    
+                    CourseDescription = c.Course.Description,
+                    CourseId = c.Course.CourseId,
+                    ModulesforActivities = c.Course.CourseModules.Select(ma => new ModulesActivitiesViewModel
+                    {
+                        ModuleNameforCourse = ma.ModuleName,
+                        ModuleID = ma.ModuleId,
+                        Activitiesformodule = ma.ModuleActivities
+                    }).ToList()
 
-                }).ToList();
-
-
-
-
-
-
-            //var model =_context.Activities.Include(a=>a.Module)
-
-            //var moduleid = _context.Modules
-            //    .Where(m => m.CourseId == course_id)
-            //    .Select(m => m.ModuleId)
-            //    .FirstOrDefault();
-
-            //var stu_activities = _context.Activities.Where(a => a.ModuleId == moduleid).ToList();
-
-            //var model = from c in _context.Courses
-            //            .Where(c => c.CourseId == course_id)
-            //            join m in _context.Modules
-            //            on c.CourseId equals m.CourseId
-            //            join a in _context.Activities
-            //            on m.ModuleId equals a.ModuleId into sp
-            //            from s in sp.DefaultIfEmpty()
-            //            select new StudenPageViewModel
-            //            {
-            //                CourseName = c.CourseName,
-            //                CourseStartDate = c.StartDate,
-            //                CourseEndDate = c.EndDate,
-            //                ModuleName = m.ModuleName,
-            //                ModuleStartDate = m.StartDate,
-            //                ModuleEndDate = m.EndDate,
-            //                ActivityName = s.ActivityName,
-            //                ActivityStartDate = s.StartDate,
-            //                ActivityEndDate = s.EndDate,
-            //                ActivityType = s.ActivityType.ToString()
-            //            };
-
-
-
+                }).ToListAsync();
 
             return View(model); 
         }

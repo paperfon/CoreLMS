@@ -52,6 +52,15 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.ModuleId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if ((User.IsInRole("Teacher")) || (User.IsInRole("Admin")))
+    {
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.ModuleId">Edit</a> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    }
+    else
+    {
+        <a asp-controller="Students"  asp-action="StudentPage">Student HomePage</a>
+    }
 </div>
