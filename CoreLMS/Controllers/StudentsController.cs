@@ -96,7 +96,7 @@ namespace CoreLMS.Controllers
                 .Select(c => c.CourseId)
                 .FirstOrDefaultAsync();
 
-            if (id == null)
+            if (course_id == null)
             {
                 return NotFound();
             }
