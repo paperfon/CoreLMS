@@ -174,7 +174,41 @@ namespace CoreLMS.Controllers
             foreach (var coursedocuments in cfs.course.CourseDocuments)
             {
                 coursedocuments.DocumentPath = Path.GetFileName(coursedocuments.DocumentPath);
+                var documentid = coursedocuments.DocumentId;
+                var documents = _context.Documents.Include(c => c.Course).Include(m => m.Module).Include(a => a.Activity)
+                               .Where(d => d.DocumentId == documentid)
+                               .Select(d => new
+                               {
+                                   id = d.DocumentId,
+                                   courseid = d.CourseId,
+                                   coursename = d.Course.CourseName,
+                                   moduleid = d.ModuleId,
+                                   modulename = d.Module.ModuleName,
+                                   activityid = d.ActivityId,
+                                   activityname = d.Activity.ActivityName
+
+                               }).FirstOrDefault();
+                var entity = "";
+                var entityname = "";
+                if ((documents.activityid != null) && (documents.moduleid != null) && (documents.courseid != null))
+                {
+                    entity = "Activity";
+                    entityname = documents.activityname;
+
+                }
+                else if((documents.activityid == null) && (documents.moduleid != null) && (documents.courseid != null))
+                {
+                    entity = "Module";
+                    entityname = documents.modulename;
+                }
+                else if((documents.activityid == null) && (documents.moduleid == null) && (documents.courseid != null))
+                {
+                    entity = "Course";
+                    entityname = documents.coursename;
+                }
+                coursedocuments.DocumentName = entity + ": " + entityname;
             }
+
             
 
             return View(cfs);
