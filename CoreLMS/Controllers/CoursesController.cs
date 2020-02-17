@@ -104,6 +104,7 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Courses/Create
+        [Authorize(Roles = "Teacher, Admin")]
         public IActionResult Create()
         {
             return View();
@@ -112,6 +113,7 @@ namespace CoreLMS.Controllers
         // POST: Courses/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Teacher, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CourseId,CourseName,StartDate,EndDate,Description")] Course course)
@@ -126,6 +128,7 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Courses/Edit/5
+        [Authorize(Roles = "Teacher, Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -144,6 +147,7 @@ namespace CoreLMS.Controllers
         // POST: Courses/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Teacher, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CourseId,CourseName,StartDate,Description")] Course course)
@@ -175,7 +179,7 @@ namespace CoreLMS.Controllers
             }
             return View(course);
         }
-
+        [Authorize(Roles = "Teacher, Admin")]
         // GET: Courses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -193,7 +197,7 @@ namespace CoreLMS.Controllers
 
             return View(course);
         }
-
+        [Authorize(Roles = "Teacher, Admin")]
         // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

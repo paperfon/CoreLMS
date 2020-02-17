@@ -98,6 +98,7 @@
                                         <tr class="p-3 mb-2 bg-warning text-dark">
                                             <td>
                                                 <a asp-action="Details" asp-controller="Activities" asp-route-id="@item2.ActivityId">@Html.DisplayFor(modelItem => item2.ActivityName)</a>
+                                               
                                             </td>
                                             <td>
                                                 @Html.DisplayFor(modelItem => item2.StartDate)
@@ -137,13 +138,13 @@
             @if (Model.course.CourseDocuments!=null)
             {
                 
-                <h3>Files for the course</h3>
+                <h3>Documents</h3>
 
                 <table class="table">
                     <thead>
                         <tr class="p-3 mb-2 bg-light text-dark">
                             <th>File link</th>
-                            <th>Document name</th>
+                            <th>Document Belongs to</th>
                             @*<th>Entity</th>
                             <th>Entity Name</th>*@
                         </tr>
