@@ -32,28 +32,28 @@ else
     <thead>
         <tr>
             <th>
-                @Html.ActionLink("DocumentName", "Index", new { sortOrder = ViewBag.DocumentNameSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.DocumentName), "Index", new { sortOrder = ViewBag.DocumentNameSortParm })
             </th>
             <th>
-                @Html.ActionLink("UploadTime", "Index", new { sortOrder = ViewBag.UploadTimeSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.UploadTime), "Index", new { sortOrder = ViewBag.UploadTimeSortParm })
             </th>
             <th>
-                @Html.ActionLink("DocumentPath", "Index", new { sortOrder = ViewBag.DocumentPathSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.DocumentPath), "Index", new { sortOrder = ViewBag.DocumentPathSortParm })
             </th>
             <th>
-                @Html.ActionLink("TypeOfDocument", "Index", new { sortOrder = ViewBag.TypeOfDocumentSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.TypeOfDocument), "Index", new { sortOrder = ViewBag.TypeOfDocumentSortParm })
             </th>
             <th>
-                @Html.ActionLink("LMSUser", "Index", new { sortOrder = ViewBag.DocumentNameSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.LMSUser), "Index", new { sortOrder = ViewBag.DocumentNameSortParm })
             </th>
             <th>
-                @Html.ActionLink("Course", "Index", new { sortOrder = ViewBag.CourseSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.Course), "Index", new { sortOrder = ViewBag.CourseSortParm })
             </th>
             <th>
-                @Html.ActionLink("Module", "Index", new { sortOrder = ViewBag.ModuleSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.Module), "Index", new { sortOrder = ViewBag.ModuleSortParm })
             </th>
             <th>
-                @Html.ActionLink("Activity", "Index", new { sortOrder = ViewBag.ActivitySortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.Activity), "Index", new { sortOrder = ViewBag.ActivitySortParm })
             </th>
             <th></th>
         </tr>
@@ -61,7 +61,6 @@ else
     <tbody>
         @foreach (var item in Model)
         {
-
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.DocumentName)

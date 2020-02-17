@@ -210,7 +210,7 @@ namespace CoreLMS.Controllers
             return _context.Courses.Any(e => e.CourseId == id);
         }
 
-        public async Task<IActionResult> CoursesModules(int id)
+        public async Task<IActionResult> Modules(int id)
         {
             var model = await _context.Modules
                  .Include(c => c.Course)

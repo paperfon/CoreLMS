@@ -25,22 +25,22 @@
     <thead>
         <tr>
             <th>
-                @Html.ActionLink("ActivityName", "Index", new { sortOrder = ViewBag.ActivityNameSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.ActivityName), "Index", new { sortOrder = ViewBag.ActivityNameSortParm })
             </th>
             <th>
-                @Html.ActionLink("StartDate", "Index", new { sortOrder = ViewBag.StartDateSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.StartDate), "Index", new { sortOrder = ViewBag.StartDateSortParm })
             </th>
             <th>
-                @Html.ActionLink("EndDate", "Index", new { sortOrder = ViewBag.EndDateSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.EndDate), "Index", new { sortOrder = ViewBag.EndDateSortParm })
             </th>
             <th>
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DescriptionSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.Description), "Index", new { sortOrder = ViewBag.DescriptionSortParm })
             </th>
             <th>
-                @Html.ActionLink("ActivityType", "Index", new { sortOrder = ViewBag.ActivityTypeSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.ActivityType), "Index", new { sortOrder = ViewBag.ActivityTypeSortParm })
             </th>
             <th>
-                @Html.ActionLink("Module", "Index", new { sortOrder = ViewBag.ModuleSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.Module), "Index", new { sortOrder = ViewBag.ModuleSortParm })
             </th>
             <th></th>
         </tr>

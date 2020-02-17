@@ -21,19 +21,19 @@
     <thead>
         <tr>
             <th>
-                @Html.ActionLink("ModuleName", "Index", new { sortOrder = ViewBag.ModuleNameSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.ModuleName), "Index", new { sortOrder = ViewBag.ModuleNameSortParm })
             </th>
             <th>
-                @Html.ActionLink("StartDate", "Index", new { sortOrder = ViewBag.StartDateSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.StartDate), "Index", new { sortOrder = ViewBag.StartDateSortParm })
             </th>
             <th>
-                @Html.ActionLink("EndDate", "Index", new { sortOrder = ViewBag.EndDateSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.EndDate), "Index", new { sortOrder = ViewBag.EndDateSortParm })
             </th>
             <th>
-                @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DescriptionSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.Description), "Index", new { sortOrder = ViewBag.DescriptionSortParm })
             </th>
             <th>
-                @Html.ActionLink("Course", "Index", new { sortOrder = ViewBag.CourseSortParm })
+                @Html.ActionLink(Html.DisplayNameFor(model => model.Course), "Index", new { sortOrder = ViewBag.CourseSortParm })
             </th>
             <th></th>
         </tr>
