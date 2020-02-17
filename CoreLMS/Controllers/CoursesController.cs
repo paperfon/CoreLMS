@@ -38,6 +38,11 @@ namespace CoreLMS.Controllers
 
             course = SortCourses(sortOrder, course);
 
+            if (this.User.IsInRole("Student"))
+            {
+                return RedirectToAction("Index", "Students");
+            }
+
             return View(await course.ToListAsync());
         }
 
