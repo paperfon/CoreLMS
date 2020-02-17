@@ -98,7 +98,7 @@
                                         <tr class="p-3 mb-2 bg-warning text-dark">
                                             <td>
                                                 <a asp-action="Details" asp-controller="Activities" asp-route-id="@item2.ActivityId">@Html.DisplayFor(modelItem => item2.ActivityName)</a>
-                                               
+
                                             </td>
                                             <td>
                                                 @Html.DisplayFor(modelItem => item2.StartDate)
@@ -113,6 +113,13 @@
                                         <tr>
                                             <td>
                                                 <a asp-action="Details" asp-controller="Activities" asp-route-id="@item2.ActivityId">@Html.DisplayFor(modelItem => item2.ActivityName)</a>
+                                                <br />
+                                                @if (item2.ActivityType == ActivityType.Assignment)
+                                                {
+                                            <p>Assignment DeadLine: @Html.DisplayFor(modelItem => item2.EndDate)</p>
+                                                    <a asp-action="UploadAssignment" asp-controller="Documents" asp-route-id="@item2.ActivityId">Upload Assignment Document</a>
+                                                }
+
                                             </td>
                                             <td>
                                                 @Html.DisplayFor(modelItem => item2.StartDate)
@@ -135,38 +142,34 @@
 
 
 
-            @if (Model.course.CourseDocuments!=null)
+            @if (Model.course.CourseDocuments != null)
             {
-                
-                <h3>Documents</h3>
+
+                <h3>Course Module and Activity Documents</h3>
 
                 <table class="table">
                     <thead>
                         <tr class="p-3 mb-2 bg-light text-dark">
                             <th>File link</th>
                             <th>Document Belongs to</th>
-                            @*<th>Entity</th>
-                            <th>Entity Name</th>*@
+
                         </tr>
                     </thead>
                     <tbody>
+                    
                         @foreach (var item in Model.course.CourseDocuments)
                         {
-                            
-                        <tr>
-                            <td>
-                                <a asp-controller="Documents" asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
-                            </td>
-                            <td>
-                                @item.DocumentName
-                            </td>
-                            @*<td>
-                                <p>Entity </p>
-                            </td>
-                            <td>
-                                <p>Entity Name</p>
-                            </td>*@
-                        </tr>
+                            @if (item.TypeOfDocument != TypeOfDoc.Assignment)
+                            {   <tr>
+                                    <td>
+                                        <a asp-controller="Documents" asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                                    </td>
+                                    <td>
+                                        @item.DocumentName
+                                    </td>
+
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
@@ -176,9 +179,52 @@
 
 
         </li>
+        <li class="list-group-item">
+            <br>
+
+
+
+            @if (Model.course.CourseDocuments != null)
+            {
+
+                <h3>uploaded Assignments Documents</h3>
+
+                <table class="table">
+                    <thead>
+                        <tr class="p-3 mb-2 bg-light text-dark">
+                            <th>File link</th>
+                            <th>Document Belongs to</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.course.CourseDocuments)
+                        {
+
+
+                            @if (item.TypeOfDocument == TypeOfDoc.Assignment)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-controller="Documents" asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                                    </td>
+                                    <td>
+                                        @item.DocumentName
+                                    </td>
+
+                                </tr>
+                                }
+                            }
+                        </tbody>
+                </table>
+            }
+
+
+
+
+        </li>
     </ul>
 </div>
-
 
 
 

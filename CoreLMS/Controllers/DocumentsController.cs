@@ -124,14 +124,14 @@ namespace CoreLMS.Controllers
         }
 
         [HttpGet]
-        public ViewResult UploadAssignmentDocument()
+        public ViewResult UploadAssignment()
         {
-            GetTypeOfDoc();
+            //GetTypeOfDoc();
 
-            ViewBag.AssignmentsList = _context.Activities.Where(a => a.ActivityType == ActivityType.Assignment)
-                .Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList(); 
-        
-            
+            //ViewBag.AssignmentsList = _context.Activities.Where(a => a.ActivityType == ActivityType.Assignment)
+            //    .Select(a => new SelectListItem { Value = a.ActivityId.ToString(), Text = a.ActivityName }).ToList();
+
+
             return View();
         }
 
@@ -142,10 +142,11 @@ namespace CoreLMS.Controllers
 }
 
         [HttpPost]
-        public async Task<IActionResult> UploadAssignmentDocumentAsync(UploadFile model, int id)
+        public async Task<IActionResult> UploadAssignmentAsync(UploadFile model, int id)
         {
             model.selectedentity = "Activity";
             model.selectedentityid = id;
+            model.TypeOfDocument = TypeOfDoc.Assignment;
             if (ModelState.IsValid)
             {
                 Document document = Fileupload(model);
