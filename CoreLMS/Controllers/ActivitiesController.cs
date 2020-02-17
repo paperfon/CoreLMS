@@ -115,16 +115,20 @@ namespace CoreLMS.Controllers
             return View(activity);
         }
 
+
         // GET: Activities/Create
+        [Authorize(Roles = "Teacher, Admin")]
         public IActionResult Create()
         {
             ViewData["ModuleId"] = new SelectList(_context.Modules, "ModuleId", "ModuleName");
             return View();
         }
 
+
         // POST: Activities/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Teacher, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ActivityId,ActivityName,StartDate,EndDate,Description,ActivityType,ModuleId")] Activity activity)
@@ -139,6 +143,8 @@ namespace CoreLMS.Controllers
             return View(activity);
         }
 
+
+        [Authorize(Roles = "Teacher, Admin")]
         // GET: Activities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -159,6 +165,7 @@ namespace CoreLMS.Controllers
         // POST: Activities/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Teacher, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ActivityId,ActivityName,StartDate,EndDate,Description,ActivityType,ModuleId")] Activity activity)

@@ -108,6 +108,9 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Modules/Create
+        [Authorize(Roles = "Teacher, Admin")]
+
+
         public IActionResult Create()
         {
             ViewData["CourseId"] = new SelectList(_context.Set<Course>(), "CourseId", "CourseName");
@@ -119,6 +122,7 @@ namespace CoreLMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher, Admin")]
         public async Task<IActionResult> Create([Bind("ModuleId,ModuleName,StartDate,EndDate,Description,CourseId")] Module module)
         {
             if (ModelState.IsValid)
@@ -132,6 +136,7 @@ namespace CoreLMS.Controllers
         }
 
         // GET: Modules/Edit/5
+        [Authorize(Roles = "Teacher, Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -151,6 +156,7 @@ namespace CoreLMS.Controllers
         // POST: Modules/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Teacher, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ModuleId,ModuleName,StartDate,EndDate,Description,CourseId")] Module module)
