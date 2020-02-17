@@ -27,7 +27,7 @@ namespace CoreLMS.Controllers
 
         // GET: Students
 
-        [Authorize(Roles = "Student")]
+        [Authorize(Roles = "Student, Teacher, Admin")]
         public async Task<IActionResult> Participant()
         {
             // Get a list of users with a particular role
