@@ -11,20 +11,18 @@
 }
 
 Welcome @ViewBag.StudentName!
-    <br />
+<br />
 
 @foreach (var course in Model)
 {
     <div class="card">
         <div class="card-header">
 
-
             <h3>Course Description</h3>
             <h2>@course.CourseName</h2>
 
         </div>
         <ul class="list-group list-group-flush">
-
 
             <li class="list-group-item">
 
@@ -54,8 +52,6 @@ Welcome @ViewBag.StudentName!
 
             </li>
 
-
-
             <li class="list-group-item">
                 <br>
 
@@ -79,25 +75,24 @@ Welcome @ViewBag.StudentName!
 
                             @foreach (var activity in module.Activitiesformodule)
                             {
-                     
-                            <tr>
-                                <td>
-                                    <a asp-action="Details" asp-controller="Activities" asp-route-id="@activity.ActivityId">@Html.DisplayFor(modelItem => activity.ActivityName)</a>
-                                    <br />
-                                    @if (activity.ActivityType == ActivityType.Assignment)
-                                    {
-                                        <p>Assignment DeadLine: @Html.DisplayFor(modelItem => activity.EndDate)</p>
-                                        <a asp-action="UploadAssignment" asp-controller="Documents" asp-route-id="@activity.ActivityId">Upload Assignment Document</a>
-                                    }
 
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => activity.StartDate)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => activity.EndDate)
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>
+                                        <a asp-action="Details" asp-controller="Activities" asp-route-id="@activity.ActivityId">@Html.DisplayFor(modelItem => activity.ActivityName)</a>
+                                        <br />
+                                        @if (activity.ActivityType == ActivityType.Assignment)
+                                        {
+                                            <p>Assignment DeadLine: @Html.DisplayFor(modelItem => activity.EndDate) | <a asp-action="UploadAssignment" asp-controller="Documents" asp-route-id="@activity.ActivityId">Upload Assignment</a></p>
+                                        }
+
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => activity.StartDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => activity.EndDate)
+                                    </td>
+                                </tr>
 
                             }
                         }

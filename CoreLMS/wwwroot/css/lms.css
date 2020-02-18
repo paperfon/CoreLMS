@@ -22,3 +22,7 @@
     margin-right: 20px;
     border-radius: 4px;
 }
+
+.bg-light {
+    background-color: #e2e2e2 !important;
+}
