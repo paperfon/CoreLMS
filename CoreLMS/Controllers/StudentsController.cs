@@ -75,7 +75,45 @@ namespace CoreLMS.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> StudentPage()
+        
+
+        public async Task<IActionResult> CourseDocuments()
+        {
+            var roleId = _context.Roles.Where(r => r.Name != "Student").Select(r => r.Id).ToList();
+            var useridList = _context.UserRoles.Where(x => roleId.Contains(x.RoleId)).Select(c => c.UserId).ToList();
+            var teacherid = userManager.Users.Where(t => useridList.Contains(t.Id)).Select(u=>u.Id).ToList();
+
+            var stu_id = userManager.GetUserId(User);
+            var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
+
+            IEnumerable<Document> courseDocuments =await _context.Documents.Include(c=>c.Course).Include(m=>m.Module).Include(a=>a.Activity).Include(u=>u.LMSUser)
+                .Where(d => d.CourseId == course_id).Where(d => teacherid.Contains(d.LMSUserId)).ToListAsync();
+
+            foreach (var doc in courseDocuments)
+            {
+                doc.DocumentPath = Path.GetFileName(doc.DocumentPath);
+            }
+
+            return View(courseDocuments);
+        }
+
+        public async Task<IActionResult> UploadedAssignments()
+        {
+            var stu_id = userManager.GetUserId(User);
+            var course_id =_context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
+
+            IEnumerable<Document> assignmentdocs = await _context.Documents.Include(a => a.Activity)
+                                                        .Where(d => d.LMSUser.Id == stu_id).Where(d => d.Activity.ActivityType == ActivityType.Assignment)
+                                                      .ToListAsync();
+            foreach (var doc in assignmentdocs)
+            {
+                doc.DocumentPath = Path.GetFileName(doc.DocumentPath);
+            }
+
+
+            return View(assignmentdocs);
+        }
+        public async Task<IActionResult> Index()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
@@ -100,12 +138,16 @@ namespace CoreLMS.Controllers
                 .Select(c => new StudenPageViewModel
                 {
                     CourseName = c.Course.CourseName,
-                    CourseDescription = c.Course.Description,
+                    Description = c.Course.Description,
+                    Start=c.Course.StartDate.Date,
+                    End=c.Course.EndDate.Date,
                     CourseId = c.Course.CourseId,
                     ModulesforActivities = c.Course.CourseModules.Select(ma => new ModulesActivitiesViewModel
                     {
                         ModuleNameforCourse = ma.ModuleName,
                         ModuleID = ma.ModuleId,
+                        End =ma.EndDate.Date,
+                        Start = ma.StartDate.Date,
                         Activitiesformodule = ma.ModuleActivities
                     }).ToList()
 
@@ -117,7 +159,7 @@ namespace CoreLMS.Controllers
 
         /******************************************************************************************************/
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index1()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = await _context.LMSUserCourses

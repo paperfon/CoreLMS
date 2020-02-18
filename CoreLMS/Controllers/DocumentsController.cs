@@ -23,6 +23,21 @@ namespace CoreLMS.Controllers
 
         }
 
+        public async Task<IActionResult> Assignments()
+        {
+          
+            IEnumerable<Document> assignmentdocs = await _context.Documents.Include(a => a.Activity).Include(u=>u.LMSUser)
+                                                       .Where(d => d.Activity.ActivityType == ActivityType.Assignment)
+                                                       .ToListAsync();
+            foreach (var doc in assignmentdocs)
+            {
+                doc.DocumentPath = Path.GetFileName(doc.DocumentPath);
+            }
+
+
+            return View(assignmentdocs);
+        }
+
         public async Task<IActionResult> Filter(string documentname)
         {
 

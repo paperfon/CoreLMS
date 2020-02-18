@@ -14,19 +14,31 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="" asp-action="Index">CoreLMS</a>
-                @if (User.IsInRole("Student") )
-                { 
-                     <a class="navbar-brand" asp-area="" asp-controller="Students" asp-action="CourseParticipent">Course participants</a>
-                     <a class="navbar-brand" asp-area="" asp-controller="Students" asp-action="Index">Student Detail</a>
-                }
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                        <partial name="_LoginPartial" />
-                    </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="CourseParticipent">Course participants</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="CourseDocuments">Course Documents</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="UploadedAssignments">UploadedAssignments</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
+            </div>
         </nav>
     </header>
 

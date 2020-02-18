@@ -1,0 +1,73 @@
+﻿@model IEnumerable<CoreLMS.Core.Models.Document>
+
+@{
+    ViewData["Title"] = "CourseDocuments";
+}
+
+<h1>CourseDocuments</h1>
+
+@*<p>
+    <a asp-action="Create">Create New</a>
+</p>*@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UploadTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentPath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TypeOfDocument)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LMSUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Course)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Module)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Activity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UploadTime)
+            </td>
+            <td>
+                <a asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TypeOfDocument)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LMSUser.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Course.CourseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Module.ModuleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Activity.ActivityName)
+            </td>
+           
+        </tr>
+}
+    </tbody>
+</table>

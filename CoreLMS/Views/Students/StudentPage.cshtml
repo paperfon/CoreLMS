@@ -20,7 +20,7 @@
             @foreach (var course in Model)
             {
                 <p><strong>Course Name:</strong>  @course.CourseName</p>
-                <p><strong> Course Description:</strong>  @course.CourseDescription</p>
+                <p><strong> Course Description:</strong>  @course.Description</p>
                 <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.CourseId">Course Details</a>
                 <hr />
                 foreach (var module in course.ModulesforActivities)
