@@ -184,7 +184,7 @@ namespace CoreLMS.Controllers
             return _context.Users.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> StudentPage()
+        public async Task<IActionResult> Index()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
