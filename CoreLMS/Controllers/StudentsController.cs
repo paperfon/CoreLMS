@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreLMS.Controllers
@@ -75,45 +76,115 @@ namespace CoreLMS.Controllers
             return View(model);
         }
 
-        
-
-        public async Task<IActionResult> CourseDocuments()
+        // GET: Students/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
-            var roleId = _context.Roles.Where(r => r.Name != "Student").Select(r => r.Id).ToList();
-            var useridList = _context.UserRoles.Where(x => roleId.Contains(x.RoleId)).Select(c => c.UserId).ToList();
-            var teacherid = userManager.Users.Where(t => useridList.Contains(t.Id)).Select(u=>u.Id).ToList();
-
-            var stu_id = userManager.GetUserId(User);
-            var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
-
-            IEnumerable<Document> courseDocuments =await _context.Documents.Include(c=>c.Course).Include(m=>m.Module).Include(a=>a.Activity).Include(u=>u.LMSUser)
-                .Where(d => d.CourseId == course_id).Where(d => teacherid.Contains(d.LMSUserId)).ToListAsync();
-
-            foreach (var doc in courseDocuments)
+            if (id == null)
             {
-                doc.DocumentPath = Path.GetFileName(doc.DocumentPath);
+                return NotFound();
             }
 
-            return View(courseDocuments);
+            var coursesList = _context.Courses.Select(i => new SelectListItem()
+            {
+                Text = i.CourseName,
+                Value = i.CourseId.ToString()
+            });
+
+            var student = await userManager.Users
+                .Include(r => r.RegisteredCourses)
+                .ThenInclude(c => c.Course)
+                .Where(s => s.Id == id)
+                .Select(s => new StudentListViewModel
+                {
+                    Id = s.Id,
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
+                    Email = s.Email,
+                    CoursesList = coursesList,
+                    CourseId = s.RegisteredCourses
+                        .Where(u => u.LMSUserId == s.Id)
+                        .Select(c=>c.CourseId)
+                        .FirstOrDefault()
+                    //Courses = s.RegisteredCourses
+                    //    .Where(u=>u.LMSUserId == s.Id)
+                    //    .Select(c=>c.Course)
+                    //    .ToList()
+                    //Select(r => r.Course).Where(c=>c. == s.Id).ToList()
+                }).FirstOrDefaultAsync();
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+            return View(student);
         }
 
-        public async Task<IActionResult> UploadedAssignments()
+        // POST: Students/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,Email,CourseId")] StudentListViewModel student)
         {
-            var stu_id = userManager.GetUserId(User);
-            var course_id =_context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
-
-            IEnumerable<Document> assignmentdocs = await _context.Documents.Include(a => a.Activity)
-                                                        .Where(d => d.LMSUser.Id == stu_id).Where(d => d.Activity.ActivityType == ActivityType.Assignment)
-                                                      .ToListAsync();
-            foreach (var doc in assignmentdocs)
+            if (id != student.Id)
             {
-                doc.DocumentPath = Path.GetFileName(doc.DocumentPath);
+                return NotFound();
             }
 
+            var courseId = student.CourseId;
 
-            return View(assignmentdocs);
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByIdAsync(id);
+                try
+                {
+                    //_context.Update(student);
+                    //var setEmailResult = await userManager.SetEmailAsync(user, student.Email);
+                    user.FirstName = student.FirstName;
+                    user.LastName = student.LastName;
+                    user.Email = student.Email;
+
+                    // Replace composite key
+                    // TODO: Should remove all courses not only the first
+                    List<LMSUserCourse> previousCourses = _context.LMSUserCourses
+                        .Where(u => u.LMSUserId == user.Id).ToList();
+                    _context.RemoveRange(previousCourses);
+
+                    var newCourse = new LMSUserCourse
+                    {
+                        CourseId = student.CourseId,
+                        LMSUserId = student.Id
+                    };
+                    _context.Add(newCourse);
+                    //user.RegisteredCourses = student.RegisteredCourses;
+                    //user.RegisteredCourses = new LMSUserCourse
+                    //{
+
+                    //}
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentExists(student.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Participant));
+            }
+            return View(student);
         }
-        public async Task<IActionResult> Index()
+
+        private bool StudentExists(string id)
+        {
+            return _context.Users.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> StudentPage()
         {
             var stu_id = userManager.GetUserId(User);
             var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();

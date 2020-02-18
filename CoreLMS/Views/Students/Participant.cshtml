@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-    <h1>Course Participant</h1>
+<h1>Course Participant</h1>
 
 <p>
-    
+
 </p>
 <table class="table">
     <thead>
@@ -47,8 +47,8 @@
                     }
                 </td>
                 <td>
-                    @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |*@
-                    @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
                     @*@Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
                 </td>
             </tr>
