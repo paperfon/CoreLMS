@@ -171,7 +171,7 @@ namespace CoreLMS.Controllers
                     _context.Add(document);
                     await _context.SaveChangesAsync();
                     TempData["AlertMessage"] = "Uploaded Successfully !!";
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("UploadedAssignments", "Students");
                 }
 
 
