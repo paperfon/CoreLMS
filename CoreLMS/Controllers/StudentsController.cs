@@ -76,6 +76,43 @@ namespace CoreLMS.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> CourseDocuments()
+        {
+            var roleId = _context.Roles.Where(r => r.Name != "Student").Select(r => r.Id).ToList();
+            var useridList = _context.UserRoles.Where(x => roleId.Contains(x.RoleId)).Select(c => c.UserId).ToList();
+            var teacherid = userManager.Users.Where(t => useridList.Contains(t.Id)).Select(u => u.Id).ToList();
+
+            var stu_id = userManager.GetUserId(User);
+            var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
+
+            IEnumerable<Document> courseDocuments = await _context.Documents.Include(c => c.Course).Include(m => m.Module).Include(a => a.Activity).Include(u => u.LMSUser)
+                .Where(d => d.CourseId == course_id).Where(d => teacherid.Contains(d.LMSUserId)).ToListAsync();
+
+            foreach (var doc in courseDocuments)
+            {
+                doc.DocumentPath = Path.GetFileName(doc.DocumentPath);
+            }
+
+            return View(courseDocuments);
+        }
+
+        public async Task<IActionResult> UploadedAssignments()
+        {
+            var stu_id = userManager.GetUserId(User);
+            var course_id = _context.LMSUserCourses.Where(s => s.LMSUserId == stu_id).Select(c => c.CourseId).FirstOrDefault();
+
+            IEnumerable<Document> assignmentdocs = await _context.Documents.Include(a => a.Activity)
+                                                        .Where(d => d.LMSUser.Id == stu_id).Where(d => d.Activity.ActivityType == ActivityType.Assignment)
+                                                      .ToListAsync();
+            foreach (var doc in assignmentdocs)
+            {
+                doc.DocumentPath = Path.GetFileName(doc.DocumentPath);
+            }
+
+
+            return View(assignmentdocs);
+        }
+
         // GET: Students/Edit/5
         public async Task<IActionResult> Edit(string id)
         {

@@ -1,65 +1,68 @@
 ﻿@model IEnumerable<CoreLMS.Core.Models.Document>
 
-@{
+    @{
     ViewData["Title"] = "Assignments";
+    }
+
+    <h1>Assignments</h1>
+@if (Model.Count() == 0)
+{
+    <p class="text-warning"><strong>No Assignments uploaded yet..</strong></p>
 }
 
-<h1>Assignments</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UploadTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentPath)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TypeOfDocument)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LMSUser)
+                </th>
 
+                <th>
+                    @Html.DisplayNameFor(model => model.Activity)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DocumentName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UploadTime)
+                </td>
+                <td>
+                    <a asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TypeOfDocument)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LMSUser.UserName)
+                </td>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DocumentName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UploadTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DocumentPath)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TypeOfDocument)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LMSUser)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.Activity)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DocumentName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UploadTime)
-            </td>
-            <td>
-                <a asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TypeOfDocument)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LMSUser.UserName)
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.Activity.ActivityName)
-            </td>
-            @*<td>
-                <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DocumentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>
-            </td>*@
-        </tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Activity.ActivityName)
+                </td>
+                @*<td>
+                        <a asp-action="Edit" asp-route-id="@item.DocumentId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.DocumentId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.DocumentId">Delete</a>
+                    </td>*@
+            </tr>
 }
-    </tbody>
-</table>
+        </tbody>
+    </table>

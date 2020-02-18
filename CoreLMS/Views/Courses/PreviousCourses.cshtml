@@ -3,10 +3,15 @@
 @{
     ViewData["Title"] = "PreviousCourses";
 }
+@if (Model.Count() == 0)
+{
+    <p class="text-warning"><strong>No Previous Courses..</strong></p>
+}
+
 
 <h3>Previous Courses</h3>
 <p>
-    <a asp-action="Index">back to Courses Index</a>  
+    <a asp-action="Index">back to Courses Index</a>
 </p>
 <table class="table">
     <thead>
@@ -43,14 +48,14 @@
                     @Html.DisplayFor(modelItem => item.EndDate)
                 </td>
                 <td>
-                    <a asp-controller="Modules"   asp-action="PreviousModules" asp-route-id="@item.CourseId">Previous Modules</a>
+                    <a asp-controller="Modules" asp-action="PreviousModules" asp-route-id="@item.CourseId">Previous Modules</a>
                 </td>
             </tr>
         }
 
 
-        
-    
+
+
     </tbody>
 </table>
 

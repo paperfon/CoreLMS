@@ -6,9 +6,10 @@
 
 <h1>CourseDocuments</h1>
 
-@*<p>
-    <a asp-action="Create">Create New</a>
-</p>*@
+@if ((Model.Count() == 0) || (Model==null))
+{
+    <p class="text-warning"><strong>No Course Documents Yet..</strong></p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -40,34 +41,35 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DocumentName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UploadTime)
-            </td>
-            <td>
-                <a asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TypeOfDocument)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LMSUser.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.CourseName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Module.ModuleName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activity.ActivityName)
-            </td>
-           
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DocumentName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UploadTime)
+                </td>
+                <td>
+                    <a asp-action="Download" asp-route-id="@item.DocumentId">@Html.DisplayFor(modelItem => item.DocumentPath)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TypeOfDocument)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LMSUser.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Course.CourseName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Module.ModuleName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Activity.ActivityName)
+                </td>
+
+            </tr>
+        }
     </tbody>
 </table>
