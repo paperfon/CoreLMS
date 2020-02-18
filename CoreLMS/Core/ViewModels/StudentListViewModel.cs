@@ -21,5 +21,7 @@ namespace CoreLMS.Core.ViewModels
         public string Email { get; set; }
         public ICollection<Course> Courses { get; set; }
         public IEnumerable<SelectListItem> CoursesList { get; set; }
+        public Course Course { get; set; }
+        public int CourseId { get; set; }
     }
 }

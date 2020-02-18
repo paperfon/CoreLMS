@@ -99,7 +99,17 @@ namespace CoreLMS.Controllers
                     Id = s.Id,
                     FirstName = s.FirstName,
                     LastName = s.LastName,
-                    Email = s.Email
+                    Email = s.Email,
+                    CoursesList = coursesList,
+                    CourseId = s.RegisteredCourses
+                        .Where(u => u.LMSUserId == s.Id)
+                        .Select(c=>c.CourseId)
+                        .FirstOrDefault()
+                    //Courses = s.RegisteredCourses
+                    //    .Where(u=>u.LMSUserId == s.Id)
+                    //    .Select(c=>c.Course)
+                    //    .ToList()
+                    //Select(r => r.Course).Where(c=>c. == s.Id).ToList()
                 }).FirstOrDefaultAsync();
 
             if (student == null)
@@ -114,16 +124,17 @@ namespace CoreLMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,Email")] LMSUser student)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,Email,CourseId")] StudentListViewModel student)
         {
             if (id != student.Id)
             {
                 return NotFound();
             }
 
+            var courseId = student.CourseId;
+
             if (ModelState.IsValid)
             {
-
                 var user = await userManager.FindByIdAsync(id);
                 try
                 {
@@ -132,6 +143,24 @@ namespace CoreLMS.Controllers
                     user.FirstName = student.FirstName;
                     user.LastName = student.LastName;
                     user.Email = student.Email;
+
+                    // Replace composite key
+                    // TODO: Should remove all courses not only the first
+                    List<LMSUserCourse> previousCourses = _context.LMSUserCourses
+                        .Where(u => u.LMSUserId == user.Id).ToList();
+                    _context.RemoveRange(previousCourses);
+
+                    var newCourse = new LMSUserCourse
+                    {
+                        CourseId = student.CourseId,
+                        LMSUserId = student.Id
+                    };
+                    _context.Add(newCourse);
+                    //user.RegisteredCourses = student.RegisteredCourses;
+                    //user.RegisteredCourses = new LMSUserCourse
+                    //{
+
+                    //}
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
