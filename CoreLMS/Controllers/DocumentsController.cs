@@ -364,7 +364,11 @@ namespace CoreLMS.Controllers
 
         public ActionResult Index(string sortOrder)
         {
-            IQueryable<Document> documents = _context.Documents.Include(d => d.Activity).Include(d => d.Course).Include(d => d.LMSUser).Include(d => d.Module);
+            IQueryable<Document> documents = _context.Documents
+                .Include(d => d.Activity)
+                .Include(d => d.Course)
+                .Include(d => d.LMSUser).Include(d => d.Module)
+                .Where(d => d.Activity.ActivityType != ActivityType.Assignment);
 
             documents = SortDocuments(sortOrder, documents);
             return View(documents.ToList());
